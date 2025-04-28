@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eye Exam Sketchpad - Efficient Clinical Notes for Ophthalmologists</title>
+    <meta name="description" content="Eye Exam Sketchpad is a productivity tool for ophthalmologists and optometrists that streamlines eye exam documentation using dictation and on-device AI.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <!-- Header Navigation -->
+<header>
+    <div class="container">
+        <div class="logo">
+            <img src="images/logo.png" alt="Eye Exam Sketchpad Logo">
+            <span>Eye Exam Sketchpad</span>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#how-it-works">How It Works</a></li>
+                <li><a href="#faq">FAQ</a></li>
+                <li><a href="#privacy">Privacy</a></li>
+                <li><a href="#download" class="download-button">Download</a></li>
+            </ul>
+            <div class="mobile-menu-button">
+                <i class="fas fa-bars"></i>
+            </div>
+        </nav>
+    </div>
+</header>
+
+<!-- Hero Section -->
+<section id="hero">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Eye Exam Sketchpad</h1>
+            <p>A clinical workflow tool for ophthalmologists and optometrists</p>
+            <div class="hero-buttons">
+                <a href="#how-it-works" class="secondary-button">Learn More</a>
+                <a href="#download" class="primary-button">App Store</a>
+            </div>
+        </div>
+        <div class="hero-image">
+            <img src="images/logo.png" alt="Eye Exam Sketchpad on iPad">
+        </div>
+    </div>
+</section>
+
+<!-- Demo Video Section -->
+<section id="demo-video">
+    <div class="container">
+        <h2>See Eye Exam Sketchpad in Action</h2>
+        <div class="video-container">
+            <video controls poster="images/video-placeholder.jpg" id="demo-video-player">
+                <source src="videos/demo-video.mp4" type="video/mp4">
+            </video>
+            <div class="play-button">
+                <i class="fas fa-play"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+   <!-- Features Section -->
+<section id="features">
+    <div class="container">
+        <h2>Features</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-microphone"></i>
+                </div>
+                <h3>Eye Vitals</h3>
+                <p>Jot down visual acuity, IOP, pupils, EOMs, and other measurements for reference.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3>Automated Organization</h3>
+                <p>On-device processing categorizes observations by anatomical structure and laterality.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <h3>Voice Dictation</h3>
+                <p>Capture clinical observations through speech with support for ophthalmology terminology.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-file-medical-alt"></i>
+                </div>
+                <h3>Structured Summary</h3>
+                <p>Generate formatted summary to review your exam observations.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <h3>Privacy First</h3>
+                <p>All processing performed on-device with no cloud connectivity or permanent storage.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-sliders-h"></i>
+                </div>
+                <h3>Adaptable</h3>
+                <p>Improve dictation accuracy by training the app specific to your speech.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+   <!-- How It Works Section -->
+<section id="how-it-works">
+    <div class="container">
+        <h2>Using the App</h2>
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Enter Eye Vitals</h3>
+                    <p>Keep track of visual acuity, IOP, pupils, EOMs, and other measurements easily.</p>
+                </div>
+                <div class="step-image" style="max-width: 300px;">
+                    <img src="images/step1.jpeg" alt="Eye Vitals Data Entry Screen" style="width: 100%;">
+                </div>
+            </div>
+            <div class="step reverse">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Dictate Slit Lamp Observations</h3>
+                    <p>Record clinical observations using voice dictation. Separate observations by saying "next."</p>
+                </div>
+                <div class="step-image" style="max-width: 300px;">
+                    <img src="images/step2.jpeg" alt="Dictation Interface" style="width: 100%;">
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Review and Adjust</h3>
+                    <p>Verify automated categorization and make any necessary adjustments. Make modifications to speech recognition.</p>
+                </div>
+                <div class="step-image" style="max-width: 300px;">
+                    <img src="images/step3.jpeg" alt="Review Interface" style="width: 100%;">
+                </div>
+            </div>
+            <div class="step reverse">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3>Export Observations</h3>
+                    <p>Copy formatted observations to your clipboard for reference.</p>
+                </div>
+                <div class="step-image" style="max-width: 300px;">
+                    <img src="images/step4.jpeg" alt="Report Generation Screen" style="width: 100%;">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- FAQ Section -->
+<section id="faq">
+    <div class="container">
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-grid">
+            <div class="faq-item">
+                <div class="faq-question" data-toggle="faq-1">
+                    <h3>How does the app address HIPAA requirements?</h3>
+                    <div class="toggle-icon">+</div>
+                </div>
+                <div class="faq-answer" id="faq-1">
+                    <p>The app processes all data locally on-device with no cloud connectivity. Users are responsible for implementing the app within their organization's HIPAA policies. The app functions as a temporary documentation tool, not a system of record.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" data-toggle="faq-4">
+                    <h3>Does the app create or store any patient information?</h3>
+                    <div class="toggle-icon">+</div>
+                </div>
+                <div class="faq-answer" id="faq-4">
+                    <p>No. The app is designed as a temporary tool to capture and organize observations during an exam, not to create reference materials. All information is temporary, exists only in memory, and is fully cleared when the app is closed or reset. The app allows you to copy formatted text to your clipboard for immediate use in your documentation system of choice, but doesn't store this information.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" data-toggle="faq-3">
+                    <h3>How does the dictation AI work?</h3>
+                    <div class="toggle-icon">+</div>
+                </div>
+                <div class="faq-answer" id="faq-3">
+                    <p>The app uses on-device speech recognition powered by Apple's Speech framework, enhanced with our proprietary ophthalmology-trained machine learning model. When you speak clinical observations, the app processes your speech locally to convert it to text. Our custom-developed analysis engine then identifies anatomical structures, organizing them into appropriate categories. All processing happens on your device without requiring an internet connection. You can further improve accuracy by adding custom corrections for terminology specific to your practice.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- Privacy Section -->
+<section id="privacy">
+    <div class="container">
+        <h2>Privacy and Data Security</h2>
+        <div class="privacy-cards">
+            <div class="privacy-card">
+                <div class="privacy-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>On-Device Processing</h3>
+                <p>All processing occurs locally without external server connections.</p>
+            </div>
+            <div class="privacy-card">
+                <div class="privacy-icon">
+                    <i class="fas fa-database"></i>
+                </div>
+                <h3>Temporary Storage</h3>
+                <p>Data exists in memory only and clears when the app is reset or closed.</p>
+            </div>
+            <div class="privacy-card">
+                <div class="privacy-icon">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <h3>Completely Offline</h3>
+                <p>Functions without internet connectivity for maximum privacy.</p>
+            </div>
+            <div class="privacy-card">
+                <div class="privacy-icon">
+                    <i class="fas fa-user-md"></i>
+                </div>
+                <h3>Provider Managed</h3>
+                <p>Designed to be used in accordance with providers' HIPAA policies.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Use Cases Section -->
+<section id="use-cases">
+    <div class="container">
+        <h2>Application in Practice</h2>
+        <div class="use-cases-grid">
+            <div class="use-case-card">
+                <div class="use-case-icon">
+                    <i class="fas fa-clipboard-check"></i>
+                </div>
+                <h3>General Eye Exams</h3>
+                <p>Streamlines routine examinations by organizing observations into a standardized format.</p>
+                <div class="card-accent"></div>
+            </div>
+            
+            <div class="use-case-card">
+                <div class="use-case-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h3>Clinical Education</h3>
+                <p>Perfect for teaching settings where residents and students can observe proper examination structure in real-time.</p>
+                <div class="card-accent"></div>
+            </div>
+            
+            <div class="use-case-card">
+                <div class="use-case-icon">
+                    <i class="fas fa-fast-forward"></i>
+                </div>
+                <h3>High-Volume Practices</h3>
+                <p>Designed for busy clinics where every minute counts—capture comprehensive observations quickly to spend more time face-to-face with patients.</p>
+                <div class="card-accent"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+   <!-- Download Section -->
+<section id="download">
+    <div class="container">
+        <h2>Availability</h2>
+        <p>Eye Exam Sketchpad is available for iOS and iPadOS devices running version 15.0 or later.</p>
+        <div class="download-options">
+            <a href="https://apps.apple.com/app/your-app-id" class="app-store-button">
+                <img src="images/app-store-badge.svg" alt="Download on the App Store">
+            </a>
+        </div>
+    </div>
+</section>
+
+   <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="footer-columns">
+            <div class="footer-column">
+                <div class="footer-logo">
+                    <img src="images/logo.png" alt="Eye Exam Sketchpad Logo">
+                    <span>Eye Sketchpad LLC</span>
+                </div>
+                <p>Developer of workflow enhancement tools for eye care professionals.</p>
+            </div>
+            <div class="footer-column">
+                <h4>Navigation</h4>
+                <ul>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#how-it-works">Using the App</a></li>
+                    <li><a href="#privacy">Privacy</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                    <li><a href="terms-of-service.html">Terms of Service</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Contact</h4>
+                <p>For questions or support:</p>
+                <a href="mailto:contact@eyesketchpadllc.com" class="contact-button">Contact Us</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <span id="current-year">2025</span> Eye Sketchpad LLC. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
