@@ -318,6 +318,83 @@ nav a:hover {
     box-shadow: var(--shadow-md);
 }
 
+/* How It Works section styling */
+.steps {
+    display: grid;
+    grid-gap: 3rem;
+    margin-top: 3rem;
+}
+
+.step {
+    display: grid;
+    grid-template-columns: auto 1fr 1fr;
+    grid-template-areas: 
+        "number content image";
+    align-items: center;
+    gap: 2rem;
+}
+
+.step.reverse {
+    grid-template-columns: 1fr 1fr auto;
+    grid-template-areas: 
+        "image content number";
+}
+
+.step-number {
+    grid-area: number;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 700;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.step-content {
+    grid-area: content;
+}
+
+.step-image {
+    grid-area: image;
+    max-width: 300px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid #eee;
+}
+
+.step-image img,
+.step-image video {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain; /* Ensures content isn't cropped */
+}
+
+@media (max-width: 768px) {
+    .step, .step.reverse {
+        grid-template-columns: 1fr;
+        grid-template-areas: 
+            "number"
+            "content"
+            "image";
+    }
+    
+    .step-number {
+        margin: 0 auto;
+    }
+    
+    .step-image {
+        margin: 0 auto;
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
 /* Demo Video */
 #demo-video {
     padding: var(--spacing-xl) 0;
