@@ -1,0 +1,295 @@
+/* /Users/jordan/Desktop/DiplopiaGuide/DiplopiaWebsite/css/manualMaddoxGrid.css */
+
+.maddox-section { /* Reusing from maddoxRod.css for consistency */
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #e0e0e0;
+}
+
+.maddox-section h3 {
+    color: #33A6A6; /* Lighter Teal from maddoxRod.css */
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.maddox-section h4 {
+    color: #035050;
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+
+#rodEyePickerSection {
+    margin-bottom: 20px;
+}
+
+#rodEyePickerSection label {
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+#rodEyePicker {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+/* Cardinal Grid */
+#cardinalGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, auto);
+    gap: 2px;
+    background-color: #ccc; /* Grid lines */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    max-width: 450px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.grid-cell {
+    background-color: white;
+    padding: 8px;
+    text-align: center;
+    min-height: 90px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 13px;
+    cursor: pointer;
+    border: 1px solid transparent; /* For hover effect */
+    transition: background-color 0.2s;
+}
+
+.grid-cell:hover {
+    background-color: #e8f4f4; /* Light teal hover */
+}
+
+.grid-cell.not-tested {
+    background-color: #f0f0f0;
+    color: #aaa;
+    cursor: default;
+}
+.grid-cell.not-tested:hover {
+    background-color: #f0f0f0;
+}
+
+
+.grid-cell .measurement-h,
+.grid-cell .measurement-v,
+.grid-cell .measurement-t {
+    display: block;
+    line-height: 1.4;
+    font-weight: normal;
+}
+
+.grid-cell .ortho {
+    color: #6c757d;
+}
+
+.grid-cell .gaze-label {
+    font-size: 11px;
+    color: #007bff; /* Blue, similar to Swift */
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+/* Head Tilt Grid */
+#headTiltGrid {
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+    margin-bottom: 20px;
+    max-width: 450px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.tilt-cell {
+    background-color: white;
+    padding: 10px;
+    text-align: center;
+    min-height: 90px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 13px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    flex-basis: 48%;
+    transition: background-color 0.2s;
+}
+
+.tilt-cell:hover {
+    background-color: #e8f4f4;
+}
+
+.tilt-cell .tilt-icon {
+    font-size: 1.5em; /* Adjust as needed */
+    color: #33A6A6; /* Teal */
+    margin-bottom: 5px;
+}
+
+.tilt-cell .tilt-title {
+    font-size: 11px;
+    color: #007bff;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.tilt-cell .measurement-v {
+    display: block;
+    line-height: 1.4;
+}
+.tilt-cell .measurement-v.ortho {
+    color: #6c757d;
+}
+
+
+/* Action Button Styling (reused from maddoxRod.css) */
+.action-button {
+    background-color: #33A6A6; /* Lighter Teal */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    margin: 20px auto 10px auto;
+}
+.action-button:hover {
+    background-color: #138686; /* Darker Teal */
+}
+.header-button { /* For Reset button in header */
+    background-color: #e0e0e0;
+    color: #333;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.header-button:hover {
+    background-color: #bbb;
+}
+
+
+/* Modal Styling */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5); /* Dim background */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal-header h3 {
+    margin-top: 0;
+    color: #33A6A6;
+}
+
+.modal-body .input-row {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.modal-body .input-row label {
+    min-width: 120px; /* Adjust as needed */
+    margin-right: 10px;
+}
+
+.modal-body input[type="number"],
+.modal-body select {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    margin-right: 10px;
+}
+.modal-body input[type="number"] {
+    width: 70px;
+}
+.modal-body select {
+    min-width: 100px;
+}
+#modalTorsionDescription {
+    font-size: 0.9em;
+    color: #555;
+}
+
+.modal-footer {
+    text-align: right;
+    margin-top: 20px;
+}
+.modal-footer .action-button {
+    display: inline-block;
+    width: auto;
+    margin: 0;
+}
+
+/* Diagnostic Suggestions (reused from maddoxRod.css) */
+#analysisResultsSection {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #e0e0e0;
+}
+.suggestion-item {
+    border: 1px solid #d4e9e9;
+    background-color: #e8f4f4;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+.suggestion-item h5 { color: #006060; margin-top: 0; }
+.suggestion-item p { font-size: 0.85em; margin: 4px 0; }
+.disclaimer-text { font-size: 0.8em; color: #6c757d; margin-top: 15px; }
+
+.header-icon {
+    /* This class was for the span, can be removed or repurposed if no longer used */
+    margin-right: 8px;
+}
+
+.header-icon-img { /* Styling for the new image icon in the header */
+    width: 24px; /* Adjust size as needed */
+    height: 24px; /* Adjust size as needed */
+    margin-right: 8px;
+    vertical-align: middle; /* Aligns image nicely with the header text */
+}

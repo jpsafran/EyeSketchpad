@@ -1,0 +1,384 @@
+/* css/maddoxRod.css */
+.maddox-section {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #e0e0e0;
+}
+
+.maddox-section h3 {
+    color: #33A6A6; /* Lighter Teal */
+    margin-top: 0;
+}
+
+#instructionsBox {
+    background-color: #e8f4f4;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    font-size: 0.9em;
+}
+#instructionsBox h4 { margin-top: 0; color: #035050; } /* Darker shade for contrast */
+#instructionsBox p strong { color: #006060; }
+
+
+#maddoxGraphicContainer {
+    background-color: black;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    height: 180px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* Important for rotated lines */
+    margin-bottom: 15px;
+}
+.graphic-placeholder { /* New wrapper for positioning context */
+    width: 90%;
+    height: 90%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.lr-labels {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    right: 5px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8em;
+    font-weight: bold;
+    color: gray;
+}
+
+.graphic-line-vertical {
+    background-color: red;
+    width: 5px;
+    height: 100px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Center the line */
+}
+.graphic-line-horizontal {
+    background-color: red;
+    width: 180px; /* Or a percentage */
+    height: 5px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Center the line */
+}
+#fellowEyeLine { top: 35%; } /* Adjust positioning */
+#rodEyeLine { top: 65%; }   /* Adjust positioning */
+
+
+.graphic-dot-centered {
+    background-color: rgba(255, 255, 255, 0.9);
+    width: 25px;
+    height: 25px;
+    line-height: 25px; /* Explicitly set line-height to container height */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center; /* Add for good measure */
+    font-size: 1.2em;
+    color: black; /* Black question mark */
+    font-weight: bold; /* Ensure question mark is bold */
+    position: absolute;
+    top: 50%; /* Added for proper centering base */
+    left: 50%;/* Added for proper centering base */
+}
+.graphic-dot-offset {
+    background-color: rgba(255, 255, 255, 0.9);
+    width: 25px;  /* Make same size as centered dot */
+    height: 25px; /* Make same size as centered dot */
+    border-radius: 50%;
+    border: 1px solid gray;
+    position: absolute;
+    top: 50%; /* Base for JS transform */
+    left: 50%;/* Base for JS transform */
+    box-sizing: border-box; /* Ensures width/height include border */
+}
+.graphic-label {
+    position: absolute;
+    bottom: 10px; /* Adjust as needed */
+    font-size: 0.7em;
+    color: white;
+    text-align: center;
+    width: 100%;
+}
+#fellowEyeLineLabel { top: calc(35% + 10px); color: rgba(255,0,0,0.8); }
+#rodEyeLineLabel { top: calc(65% + 10px); color: rgba(255,0,0,0.8); }
+
+
+.qualitative-option-button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px; /* Increased spacing */
+    background-color: #33A6A6; /* Lighter Teal */
+    color: white;
+    border: none;
+    border-radius: 8px; /* Match other elements */
+    cursor: pointer;
+    text-align: left;
+}
+.qualitative-option-button:hover { background-color: #006060; }
+
+#quantitativeInputSection label { display: block; margin-bottom: 5px; }
+#quantitativeValueInput {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    width: 80px;
+    margin-right: 10px;
+}
+#quantitativeDirectionDisplay { font-size: 0.9em; }
+
+.navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+.action-button { /* For Start, Confirm & Next, Analyze */
+    background-color: #008080; /* Teal */
+    color: white; /* Keep white text */
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer; /* Ensured cursor is pointer */
+}
+.action-button:hover { background-color: #006060; }
+.secondary-button { /* For Back */
+    background-color: #ccc;
+    color: #333;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.secondary-button:hover { background-color: #bbb; }
+.secondary-button:disabled { background-color: #f0f0f0; color: #aaa; cursor: not-allowed;} /* Even lighter when disabled */
+
+.skip-button {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 12px;
+    background-color: #f0f0f0;
+    color: #33A6A6; /* Lighter Teal */
+    text-decoration: none;
+    border-radius: 8px; /* Match other elements */
+    border: 1px solid #008080;
+}
+
+.header-icon-img { /* Styling for the new image icon in the header */
+    width: 24px; /* Adjust size as needed */
+    height: 24px; /* Adjust size as needed */
+    margin-right: 8px;
+    vertical-align: middle; /* Aligns image nicely with the header text */
+    border-radius: 4px; /* Optional: if you want slightly rounded corners for the logo here */
+}
+
+/* Results Table */
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+    font-size: 0.9em;
+}
+.results-table th, .results-table td {
+    border: 1px solid #ddd;
+    padding: 6px;
+    text-align: left;
+}
+.results-table th {
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+.suggestion-item {
+    border: 1px solid #d4e9e9;
+    background-color: #e8f4f4;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+.suggestion-item h5 { color: #006060; margin-top: 0; }
+.suggestion-item p { font-size: 0.85em; margin: 4px 0; }
+.disclaimer-text { font-size: 0.8em; color: #6c757d; margin-top: 15px; } /* Bootstrap secondary color */
+
+/* Double Maddox Interactive UI */
+#doubleMaddoxInteractiveUI { margin-top: 15px; }
+.trial-frame-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #222; /* Darker background for contrast */
+    padding: 20px;
+    padding-top: 30px; /* Extra space for labels */
+    padding-bottom: 30px; /* Extra space for angles */
+    border-radius: 8px;
+    margin-bottom: 10px;
+    min-height: 180px; /* Ensure enough space */
+}
+.trial-lens {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background-color: #111; /* Blackish lens */
+    border: 3px solid red;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    cursor: grab; /* Indicate draggable */
+}
+.trial-lens .lens-line {
+    width: 90%;
+    height: 4px;
+    background-color: white;
+    position: absolute;
+    transform-origin: center;
+    pointer-events: none; /* So drag gesture is on the lens circle */
+}
+.trial-lens .lens-label {
+    position: absolute;
+    top: -25px; 
+    font-size: 0.8em;
+    color: white;
+    text-align: center;
+}
+.trial-lens .lens-angle {
+    position: absolute;
+    bottom: -25px; 
+    font-size: 0.8em;
+    color: white;
+    background-color: rgba(0,0,0,0.5);
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+#torsionResultDisplay {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 15px; /* Add space below torsion result */
+    color: #008080; /* Teal */
+}
+
+/* Tic-Tac-Toe Results Grid */
+#resultsGridContainer {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, auto); /* Adjust if fixed height is needed */
+    gap: 1px; /* Creates thin grid lines */
+    background-color: #cccccc; /* Color of the grid lines */
+    border: 1px solid #cccccc; /* Outer border */
+    margin-bottom: 20px;
+    max-width: 400px; /* Optional: constrain width */
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 8px; /* Match Swift UI corner radius */
+    overflow: hidden; /* Ensures children conform to border-radius */
+}
+
+.grid-cell {
+    background-color: white;
+    padding: 8px;
+    text-align: center;
+    min-height: 80px; /* Ensure cells have some height, similar to Swift UI */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 13px; /* Match Swift UI .system(size: 13) */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.grid-cell .measurement-h,
+.grid-cell .measurement-v,
+.grid-cell .measurement-t {
+    display: block; /* Each on its own line */
+    line-height: 1.3; /* Adjust for better readability */
+}
+
+.grid-cell .not-tested {
+    color: #6c757d; /* Secondary text color for N/T */
+    font-style: italic;
+}
+
+.grid-cell .ortho {
+    color: #6c757d; /* Bootstrap's secondary text color */
+}
+
+.grid-cell .gaze-label {
+    font-size: 11px; /* Match Swift UI .system(size: 11) */
+    color: #33A6A6; /* Lighter Teal to match theme */
+    margin-top: 4px;
+    font-weight: bold;
+}
+
+#headTiltResultsContainer {
+    display: flex;
+    justify-content: space-around; /* Distributes space around items */
+    align-items: flex-start; /* Align items to the top */
+    margin-bottom: 15px;
+    gap: 10px; /* Space between the two tilt result items */
+}
+
+.head-tilt-result-item {
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    flex-basis: 48%; /* Each item takes up close to half the space */
+    box-sizing: border-box;
+}
+
+.head-tilt-result-item .gaze-title {
+    font-weight: bold;
+    color: #008080; /* Teal */
+    margin-bottom: 8px; /* Increased space */
+    font-size: 0.9em;
+}
+
+.head-tilt-result-item .measurement-value {
+    font-size: 0.9em;
+}
+.head-tilt-result-item .measurement-value.ortho {
+    color: #6c757d;
+}
+
+/* Specific button styles using the new theme color */
+.action-button, .qualitative-option-button { background-color: #33A6A6; }
+.action-button:hover, .qualitative-option-button:hover { background-color: #138686; } /* Darker hover */
+
+#resetTiltButton {
+    display: block;
+    margin: 10px auto 0;
+}
+
+/* Override for the header button on the Maddox Rod page */
+.view-header .header-button {
+    background-color: #33A6A6; /* Lighter Teal */
+    color: white; /* Keep text white for contrast */
+}
+.view-header .header-button:hover {
+    background-color: #298080; /* Darker shade of lighter teal for hover */
+}
+
+/* Override for the header title on the Maddox Rod page */
+.view-header h2 {
+    color: #33A6A6; /* Lighter Teal */
+}
+
+.header-icon {
+    margin-right: 8px;
+}
+}

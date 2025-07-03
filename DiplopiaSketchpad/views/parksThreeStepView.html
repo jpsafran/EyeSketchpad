@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Park's 3-Step Test</title>
+    <style>
+        :root {
+            --theme-color: #008080; /* Teal */
+            --background-color: #f0f8f8;
+            --card-background: #ffffff;
+            --border-color: #e0e0e0;
+            --text-color: #333;
+            --secondary-text-color: #555;
+            --step1-color: #d9534f; /* Red */
+            --step2-color: #428bca; /* Blue */
+            --step3-color: #f0ad4e; /* Yellow/Orange */
+            --final-color: #5cb85c; /* Green */
+        }
+
+        /* General Body and Layout */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Header from maddoxRod.css example */
+        .view-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+        .view-header h2 {
+            color: var(--theme-color);
+            margin: 0;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .header-icon-img {
+            height: 32px;
+            width: 32px;
+        }
+        .back-button {
+            color: var(--theme-color);
+            text-decoration: none;
+            font-size: 1em;
+            font-weight: 500;
+        }
+        .header-button {
+            padding: 8px 16px;
+            font-size: 1em;
+            background-color: var(--theme-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .header-button:hover { opacity: 0.9; }
+
+        /* Main Content Layout */
+        .main-content {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            align-items: flex-start;
+        }
+        .diagram-section, .controls-section {
+            background: var(--card-background);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .diagram-section {
+            flex: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 450px;
+        }
+        .controls-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Info Panel & Result Containers for stable layout */
+        #info-panel-container, #result-container {
+            position: relative;
+            transition: min-height 0.3s ease;
+        }
+        #info-panel-container { min-height: 220px; }
+        #result-container { min-height: 60px; }
+
+        .info-panel {
+            padding: 15px; background: #e6f2f2; border: 1px solid #b2dfdb; border-radius: 8px;
+            opacity: 0; transform: scale(0.95); transition: opacity 0.3s ease, transform 0.3s ease;
+            position: absolute; width: 100%; box-sizing: border-box;
+        }
+        .info-panel.visible { opacity: 1; transform: scale(1); }
+        .info-panel h3 { margin-top: 0; color: var(--theme-color); display: flex; justify-content: space-between; align-items: center; }
+        .info-panel .close-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: #888; }
+        .info-panel p { margin: 5px 0; font-size: 0.9em; }
+        .info-panel hr { border: none; border-top: 1px solid #b2dfdb; margin: 8px 0; }
+        .info-panel .pearl { font-style: italic; color: var(--secondary-text-color); }
+        
+        .step-card { padding: 0; /* Remove padding as it's part of the parent now */ }
+        .step-card h3 { margin-top: 0; margin-bottom: 10px; font-size: 1.1em; color: var(--secondary-text-color); }
+        
+        .segmented-control { display: flex; width: 100%; border-radius: 5px; overflow: hidden; border: 1px solid var(--theme-color); }
+        .segmented-control button { flex: 1; padding: 10px; background-color: #fff; color: var(--theme-color); border: none; cursor: pointer; font-size: 0.9em; transition: background-color 0.2s, color 0.2s; }
+        .segmented-control button:not(:last-child) { border-right: 1px solid var(--theme-color); }
+        .segmented-control button.selected { background-color: var(--theme-color); color: white; }
+
+        .result-display {
+            padding: 15px; text-align: center; font-size: 1.4em; font-weight: bold; border-radius: 8px;
+            position: absolute; width: 100%; box-sizing: border-box; opacity: 0; transition: opacity 0.3s ease;
+        }
+        .result-display.visible { opacity: 1; }
+        .result-final { background-color: #dff0d8; color: #3c763d; border: 1px solid #d6e9c6; }
+        .result-inconclusive { background-color: #fcf8e3; color: #8a6d3b; border: 1px solid #faebcc; }
+        
+        /* H-Diagram Styling */
+        .h-diagram-container { display: flex; gap: 40px; }
+        .eye-diagram { position: relative; width: 250px; height: 280px; }
+        .diagram-content { position: absolute; top: 50%; left: 50%; width: 100px; height: 120px; transform: translate(-50%, -50%); }
+        .h-shape .v-bar { position: absolute; width: 10px; height: 120px; background-color: rgba(0, 128, 128, 0.4); }
+        .h-shape .h-bar { position: absolute; top: 55px; left: 10px; width: 80px; height: 10px; background-color: rgba(0, 128, 128, 0.4); }
+        .h-shape .left { left: 0; }
+        .h-shape .right { left: 90px; }
+        .muscle-label { position: absolute; font-size: 14px; cursor: pointer; padding: 4px; user-select: none; z-index: 10; transform: translate(-50%, -50%); }
+        .muscle-label.final { font-weight: bold; color: #000; }
+        .highlight-circle { position: absolute; border-radius: 50%; border-style: solid; pointer-events: none; z-index: 5; transform: translate(-50%, -50%); }
+
+        /* Responsive adjustments */
+        @media (max-width: 900px) {
+            .main-content { flex-direction: column; }
+            .controls-section { order: -1; }
+            .diagram-section { min-height: 380px; }
+            .h-diagram-container { transform: scale(0.9); justify-content: center; }
+        }
+        @media (max-width: 500px) {
+            .view-header h2 { font-size: 1.2em; }
+            .h-diagram-container { transform: scale(0.8); }
+            .segmented-control { flex-direction: column; }
+            .segmented-control button:not(:last-child) { border-right: none; border-bottom: 1px solid var(--theme-color); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header class="view-header">
+            <a href="../index.html" class="back-button">← Home</a>
+            <h2>
+                <img src="../images/Parks.png" alt="Parks Icon" class="header-icon-img">
+                Park's 3-Step Test
+            </h2>
+            <button id="resetButton" class="header-button">Reset</button>
+        </header>
+
+        <div class="main-content">
+            <section class="diagram-section">
+                <div class="h-diagram-container">
+                    <div id="right-eye-diagram" class="eye-diagram"></div>
+                    <div id="left-eye-diagram" class="eye-diagram"></div>
+                </div>
+            </section>
+            
+            <section class="controls-section">
+                <div id="info-panel-container"></div>
+                
+                <div class="step-card">
+                    <h3>Step 1: Which eye is hyper in primary gaze?</h3>
+                    <div class="segmented-control" id="step1-control">
+                        <button data-value="right">Right Eye Hyper</button>
+                        <button data-value="left">Left Eye Hyper</button>
+                    </div>
+                </div>
+                
+                <div class="step-card" id="step2-card" style="display: none;">
+                    <h3>Step 2: Worse in right or left gaze?</h3>
+                    <div class="segmented-control" id="step2-control">
+                        <button data-value="right">Right Gaze</button>
+                        <button data-value="left">Left Gaze</button>
+                    </div>
+                </div>
+
+                <div class="step-card" id="step3-card" style="display: none;">
+                    <h3>Step 3: Worse with right or left head tilt?</h3>
+                    <div class="segmented-control" id="step3-control">
+                        <button data-value="right">Right Head Tilt</button>
+                        <button data-value="left">Left Head Tilt</button>
+                    </div>
+                </div>
+                
+                <div id="result-container"></div>
+            </section>
+        </div>
+    </div>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const state = { step1Selection: null, step2Selection: null, step3Selection: null, selectedMuscleForInfo: null };
+        
+        const muscleInfo = {
+            RSR: { nerve: 'Oculomotor (CN III - Ipsilateral)', action: 'Elevation, Intorsion, Adduction', path: 'CN III palsy common causes include microvascular ischemia (diabetes, hypertension), compression (aneurysm, tumor), trauma, or inflammation.', pearl: 'Head posture in CN III palsy is variable.' },
+            RIR: { nerve: 'Oculomotor (CN III - Ipsilateral)', action: 'Depression, Extorsion, Adduction', path: 'CN III palsy common causes include microvascular ischemia, compression, trauma, or inflammation.', pearl: 'Head posture in CN III palsy is variable.' },
+            RSO: { nerve: 'Trochlear (CN IV - Contralateral)', action: 'Intorsion, Depression, Abduction', path: 'Most common cause of acquired vertical diplopia. Causes include congenital, head trauma (often minor), or microvascular ischemia.', pearl: 'Patient often tilts head AWAY from the palsied (Right) side to minimize diplopia.' },
+            RIO: { nerve: 'Oculomotor (CN III - Ipsilateral)', action: 'Extorsion, Elevation, Abduction', path: 'CN III palsy common causes include microvascular ischemia, compression, trauma, or inflammation.', pearl: 'Head posture in CN III palsy is variable.' },
+            LSR: { nerve: 'Oculomotor (CN III - Ipsilateral)', action: 'Elevation, Intorsion, Adduction', path: 'CN III palsy common causes include microvascular ischemia, compression, trauma, or inflammation.', pearl: 'Head posture in CN III palsy is variable.' },
+            LIR: { nerve: 'Oculomotor (CN III - Ipsilateral)', action: 'Depression, Extorsion, Adduction', path: 'CN III palsy common causes include microvascular ischemia, compression, trauma, or inflammation.', pearl: 'Head posture in CN III palsy is variable.' },
+            LSO: { nerve: 'Trochlear (CN IV - Contralateral)', action: 'Intorsion, Depression, Abduction', path: 'Most common cause of acquired vertical diplopia. Causes include congenital, head trauma (often minor), or microvascular ischemia.', pearl: 'Patient often tilts head AWAY from the palsied (Left) side to minimize diplopia.' },
+            LIO: { nerve: 'Oculomotor (CN III - Ipsilateral)', action: 'Extorsion, Elevation, Abduction', path: 'CN III palsy common causes include microvascular ischemia, compression, trauma, or inflammation.', pearl: 'Head posture in CN III palsy is variable.' },
+        };
+        
+        const musclePositions = {
+            RSR: { x: -65, y: -80 }, RIR: { x: -65, y: 80 },
+            RIO: { x: 65, y: -80 }, RSO: { x: 65, y: 80 },
+            LIO: { x: -65, y: -80 }, LSO: { x: -65, y: 80 },
+            LSR: { x: 65, y: -80 }, LIR: { x: 65, y: 80 },
+        };
+
+        const muscleSets = {
+            RHT: new Set(['RIR', 'RSO', 'LSR', 'LIO']), LHT: new Set(['LIR', 'LSO', 'RSR', 'RIO']),
+            WorseRightGaze: new Set(['RSR', 'RIR', 'LIO', 'LSO']), WorseLeftGaze: new Set(['RIO', 'RSO', 'LSR', 'LIR']),
+            WorseRightTilt: new Set(['RSR', 'RSO', 'LIO', 'LIR']), WorseLeftTilt: new Set(['RIO', 'RIR', 'LSR', 'LSO']),
+        };
+
+        const rightEyeDiagram = document.getElementById('right-eye-diagram');
+        const leftEyeDiagram = document.getElementById('left-eye-diagram');
+        const infoPanelContainer = document.getElementById('info-panel-container');
+        const resultContainer = document.getElementById('result-container');
+        const resetButton = document.getElementById('resetButton');
+
+        function calculateFinalMuscle() {
+            if (!state.step1Selection || !state.step2Selection || !state.step3Selection) return null;
+            const set1 = state.step1Selection === 'right' ? muscleSets.RHT : muscleSets.LHT;
+            const set2 = state.step2Selection === 'right' ? muscleSets.WorseRightGaze : muscleSets.WorseLeftGaze;
+            const set3 = state.step3Selection === 'right' ? muscleSets.WorseRightTilt : muscleSets.WorseLeftTilt;
+            const intersection12 = new Set([...set1].filter(x => set2.has(x)));
+            const finalIntersection = new Set([...intersection12].filter(x => set3.has(x)));
+            return finalIntersection.size === 1 ? [...finalIntersection][0] : null;
+        }
+        
+        function render() {
+            updateControlVisibility();
+            updateControlSelection();
+            renderDiagrams();
+            renderInfoPanel();
+            renderResult();
+        }
+        
+        function updateControlVisibility() {
+            document.getElementById('step2-card').style.display = state.step1Selection ? 'block' : 'none';
+            document.getElementById('step3-card').style.display = state.step2Selection ? 'block' : 'none';
+        }
+
+        function updateControlSelection() {
+            document.querySelectorAll('#step1-control button').forEach(btn => btn.classList.toggle('selected', btn.dataset.value === state.step1Selection));
+            document.querySelectorAll('#step2-control button').forEach(btn => btn.classList.toggle('selected', btn.dataset.value === state.step2Selection));
+            document.querySelectorAll('#step3-control button').forEach(btn => btn.classList.toggle('selected', btn.dataset.value === state.step3Selection));
+        }
+
+        function renderDiagrams() {
+            const finalMuscle = calculateFinalMuscle();
+            const highlights = {
+                step1: state.step1Selection ? (state.step1Selection === 'right' ? muscleSets.RHT : muscleSets.LHT) : new Set(),
+                step2: state.step2Selection ? (state.step2Selection === 'right' ? muscleSets.WorseRightGaze : muscleSets.WorseLeftGaze) : new Set(),
+                step3: state.step3Selection ? (state.step3Selection === 'right' ? muscleSets.WorseRightTilt : muscleSets.WorseLeftTilt) : new Set(),
+            };
+
+            [rightEyeDiagram, leftEyeDiagram].forEach(container => { container.innerHTML = `<div class="diagram-content"><div class="h-shape"><div class="v-bar left"></div><div class="v-bar right"></div><div class="h-bar"></div></div></div>`; });
+            
+            const rightEyeContent = rightEyeDiagram.querySelector('.diagram-content');
+            const leftEyeContent = leftEyeDiagram.querySelector('.diagram-content');
+
+            Object.keys(muscleInfo).forEach(muscleKey => {
+                const isRightEye = ['RSR', 'RIR', 'RSO', 'RIO'].includes(muscleKey);
+                const container = isRightEye ? rightEyeContent : leftEyeContent;
+                const pos = musclePositions[muscleKey];
+                const label = document.createElement('div');
+                label.className = 'muscle-label';
+                label.textContent = muscleKey;
+                label.style.left = `calc(50% + ${pos.x}px)`;
+                label.style.top = `calc(50% + ${pos.y}px)`;
+                label.dataset.muscle = muscleKey;
+                
+                if (finalMuscle === muscleKey) {
+                    label.classList.add('final');
+                    container.appendChild(createHighlightCircle(pos, 50, `var(--final-color)`));
+                } else {
+                    if (highlights.step3.has(muscleKey)) container.appendChild(createHighlightCircle(pos, 70, `var(--step3-color)`));
+                    if (highlights.step2.has(muscleKey)) container.appendChild(createHighlightCircle(pos, 60, `var(--step2-color)`));
+                    if (highlights.step1.has(muscleKey)) container.appendChild(createHighlightCircle(pos, 50, `var(--step1-color)`));
+                }
+                container.appendChild(label);
+            });
+        }
+        
+        function createHighlightCircle(pos, size, color) {
+            const circle = document.createElement('div');
+            circle.className = 'highlight-circle';
+            circle.style.width = `${size}px`; circle.style.height = `${size}px`;
+            circle.style.borderColor = color; circle.style.borderWidth = '2px';
+            circle.style.left = `calc(50% + ${pos.x}px)`; circle.style.top = `calc(50% + ${pos.y}px)`;
+            return circle;
+        }
+
+        function renderInfoPanel() {
+            const panel = infoPanelContainer.querySelector('.info-panel');
+            if (state.selectedMuscleForInfo) {
+                const muscle = state.selectedMuscleForInfo;
+                const info = muscleInfo[muscle];
+                if (!panel) { infoPanelContainer.innerHTML = `<div class="info-panel"></div>`; }
+                const currentPanel = infoPanelContainer.querySelector('.info-panel');
+                currentPanel.innerHTML = `<h3><span>${muscle} Info</span><button class="close-btn" id="info-close-btn">×</button></h3><p><strong>Nerve:</strong> ${info.nerve}</p><p><strong>Action(s):</strong> ${info.action}</p><hr><p>${info.path}</p><hr><p class="pearl">${info.pearl}</p>`;
+                document.getElementById('info-close-btn').addEventListener('click', () => { state.selectedMuscleForInfo = null; render(); });
+                setTimeout(() => currentPanel.classList.add('visible'), 10);
+            } else {
+                 if (panel) {
+                    panel.classList.remove('visible');
+                    setTimeout(() => { if (!state.selectedMuscleForInfo) infoPanelContainer.innerHTML = ''; }, 300);
+                 }
+            }
+        }
+        
+        function renderResult() {
+            resultContainer.innerHTML = '';
+            let resultDiv;
+            const finalMuscle = calculateFinalMuscle();
+            if (finalMuscle) {
+                resultDiv = document.createElement('div');
+                resultDiv.className = 'result-display result-final';
+                resultDiv.textContent = `Result: ${finalMuscle} Palsy`;
+            } else if (state.step3Selection) {
+                resultDiv = document.createElement('div');
+                resultDiv.className = 'result-display result-inconclusive';
+                resultDiv.textContent = `Result: Inconclusive`;
+            }
+            if (resultDiv) {
+                resultContainer.appendChild(resultDiv);
+                setTimeout(() => resultDiv.classList.add('visible'), 10);
+            }
+        }
+        
+        function handleStepSelection(step, value) {
+            if (step === 1) { state.step1Selection = state.step1Selection === value ? null : value; state.step2Selection = null; state.step3Selection = null; } 
+            else if (step === 2) { state.step2Selection = state.step2Selection === value ? null : value; state.step3Selection = null; } 
+            else if (step === 3) { state.step3Selection = state.step3Selection === value ? null : value; }
+            render();
+        }
+
+        document.getElementById('step1-control').addEventListener('click', e => { if (e.target.tagName === 'BUTTON') handleStepSelection(1, e.target.dataset.value); });
+        document.getElementById('step2-control').addEventListener('click', e => { if (e.target.tagName === 'BUTTON') handleStepSelection(2, e.target.dataset.value); });
+        document.getElementById('step3-control').addEventListener('click', e => { if (e.target.tagName === 'BUTTON') handleStepSelection(3, e.target.dataset.value); });
+        document.querySelector('.h-diagram-container').addEventListener('click', e => { if (e.target.classList.contains('muscle-label')) { const muscle = e.target.dataset.muscle; state.selectedMuscleForInfo = state.selectedMuscleForInfo === muscle ? null : muscle; render(); }});
+        resetButton.addEventListener('click', () => { state.step1Selection = null; state.step2Selection = null; state.step3Selection = null; state.selectedMuscleForInfo = null; render(); });
+
+        render();
+    });
+    </script>
+
+</body>
+</html>
