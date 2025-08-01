@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ophthalmic Drop Cap Guide</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/home.css">
+    <style>
+        .dropcap-header {
+            text-align: center;
+            margin-top: 2rem;
+        }
+        .dropcap-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+        .dropcap-category {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 140px;
+            height: 140px;
+            border-radius: 16px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.08);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1em;
+            line-height: 1.15;
+            text-align: center;
+            word-break: break-word;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+        /* For long category labels, reduce font size further */
+        .dropcap-category .category-label {
+            font-size: 0.95em;
+            line-height: 1.1;
+            text-align: center;
+            word-break: break-word;
+        }
+        .dropcap-category:hover {
+            box-shadow: 0 0 16px rgba(0,0,0,0.13);
+            transform: scale(1.05);
+        }
+        .dropcap-teal { background: #008080; color: #fff; }
+        .dropcap-white { background: #fff; color: #333; border: 1px solid #eee; }
+        .dropcap-yellow { background: #FFD700; color: #333; }
+        .dropcap-lightblue { background: #ADD8E6; color: #333; }
+        .dropcap-darkblue { background: #00008B; color: #fff; }
+        .dropcap-lightgreen { background: #90EE90; color: #333; }
+        .dropcap-orange { background: #FF8C00; color: #fff; }
+        .dropcap-purple { background: #800080; color: #fff; }
+        .dropcap-darkgreen { background: #006400; color: #fff; }
+        .dropcap-red { background: #FF0000; color: #fff; }
+        .dropcap-pink { background: #FF69B4; color: #fff; }
+        .dropcap-gray { background: #808080; color: #fff; }
+        .dropcap-tan { background: #D2B48C; color: #333; }
+        .dropcap-black { background: #000; color: #fff; }
+        .dropcap-white-nocap { background: #fff; color: #333; border: 2px dashed #ccc; }
+        .category-label { margin-top: 0.5em; font-size: 1em; font-weight: 700; }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            overflow-y: auto;
+        }
+        .modal-content {
+            background: #fff;
+            border-radius: 16px;
+            max-width: 95vw;
+            width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2rem;
+            box-shadow: 0 0 24px rgba(0,0,0,0.18);
+            position: relative;
+        }
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5em;
+            color: #888;
+            cursor: pointer;
+        }
+        .drop-list {
+            margin-top: 1.5em;
+        }
+        .drop-item {
+            margin-bottom: 1.5em;
+            padding-bottom: 1em;
+            border-bottom: 1px solid #eee;
+        }
+        .drop-title {
+            font-size: 1.15em;
+            font-weight: 700;
+            margin-bottom: 0.3em;
+        }
+        .drop-attr {
+            font-size: 0.98em;
+            margin-bottom: 0.2em;
+        }
+        @media (max-width: 600px) {
+            .modal-content { width: 98vw; padding: 1rem; max-height: 95vh; }
+            .dropcap-grid { gap: 0.7rem; }
+            .dropcap-category { width: 100px; height: 100px; font-size: 0.95em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav style="margin-bottom:1.5em;">
+            <a href="../index.html" style="background: #00A6A6; color: #fff; text-decoration: none; font-weight: 600; font-size: 1.05em; padding: 0.5em 1.2em; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); display: inline-block; transition: background 0.2s, color 0.2s;">&larr; Back to Eye Sketchpad Home</a>
+        </nav>
+        <header class="dropcap-header">
+            <h1>Ophthalmic Drop Cap Guide</h1>
+            <p>Click a cap color to view its drug category and drops. Select a drop for details.</p>
+            <button id="quizModeBtn" style="margin-top:1em;padding:0.6em 1.4em;font-size:1.08em;background:#008080;color:#fff;border:none;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.07);cursor:pointer;font-weight:600;transition:background 0.2s;">Quiz Mode!</button>
+        </header>
+        <section>
+            <div class="dropcap-grid">
+                <div class="dropcap-category dropcap-teal" data-category="teal"><span class="category-label">Teal</span><br>Prostaglandin Analogs</div>
+                <div class="dropcap-category dropcap-white" data-category="white"><span class="category-label">White</span><br>ROCK Inhibitors & Misc.</div>
+                <div class="dropcap-category dropcap-yellow" data-category="yellow"><span class="category-label">Yellow</span><br>β-blockers 0.5%</div>
+                <div class="dropcap-category dropcap-lightblue" data-category="lightblue"><span class="category-label">Light Blue</span><br>β-blockers 0.25%</div>
+                <div class="dropcap-category dropcap-darkblue" data-category="darkblue"><span class="category-label">Dark Blue</span><br>β-blocker Combos</div>
+                <div class="dropcap-category dropcap-lightgreen" data-category="lightgreen"><span class="category-label">Light Green</span><br>α-2 + CAI Combo</div>
+                <div class="dropcap-category dropcap-orange" data-category="orange"><span class="category-label">Orange</span><br>CAIs</div>
+                <div class="dropcap-category dropcap-purple" data-category="purple"><span class="category-label">Purple</span><br>α-2 Agonists</div>
+                <div class="dropcap-category dropcap-darkgreen" data-category="darkgreen"><span class="category-label">Dark Green</span><br>Miotics</div>
+                <div class="dropcap-category dropcap-red" data-category="red"><span class="category-label">Red</span><br>Mydriatics/Cycloplegics</div>
+                <div class="dropcap-category dropcap-pink" data-category="pink"><span class="category-label">Pink</span><br>Steroids</div>
+                <div class="dropcap-category dropcap-gray" data-category="gray"><span class="category-label">Gray</span><br>NSAIDs</div>
+                <div class="dropcap-category dropcap-tan" data-category="tan"><span class="category-label">Tan</span><br>Antibiotics</div>
+                <div class="dropcap-category dropcap-black" data-category="black"><span class="category-label">Black/Stripe</span><br>Ointments</div>
+                <div class="dropcap-category dropcap-white-nocap" data-category="white-nocap"><span class="category-label">White (No Cap)</span><br>Miscellaneous</div>
+            </div>
+        </section>
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <span class="modal-close" id="modalClose">&times;</span>
+                <div id="modalTitle" style="font-size:1.2em;font-weight:700;margin-bottom:0.5em;"></div>
+                <div id="modalCategoryDesc" style="margin-bottom:1em;color:#666;"></div>
+                <div class="drop-list" id="dropList"></div>
+            </div>
+        </div>
+    <!-- Quiz Mode Modal -->
+    <div id="quizModal" class="modal">
+        <div class="modal-content" style="max-width:400px;width:98vw;">
+            <span class="modal-close" id="quizModalClose">&times;</span>
+            <div id="quizCard" style="margin-bottom:1.2em;"></div>
+            <button id="quizShowAnswer" style="width:100%;padding:0.7em;font-size:1.08em;background:#008080;color:#fff;border:none;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.07);cursor:pointer;font-weight:600;">Show Answer</button>
+            <div id="quizFeedback" style="margin-top:1em;font-size:1.05em;display:none;"></div>
+            <button id="quizNext" style="width:100%;margin-top:1.2em;padding:0.7em;font-size:1.08em;background:#00A6A6;color:#fff;border:none;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.07);cursor:pointer;font-weight:600;display:none;">Next Card</button>
+            <button id="quizExit" style="width:100%;margin-top:1.2em;padding:0.7em;font-size:1.08em;background:#888;color:#fff;border:none;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.07);cursor:pointer;font-weight:600;">Exit Quiz</button>
+        </div>
+    </div>
+        <!-- Disclaimer Section -->
+        <div class="dropcap-disclaimer" style="margin:2em auto 1em auto;max-width:700px;background:#fff8f8;border:1px solid #e0b4b4;border-radius:12px;padding:1.2em 1.5em;color:#800;font-size:1em;box-shadow:0 2px 12px rgba(0,0,0,0.07);">
+            <strong>Disclaimer:</strong> The information provided in this tool is for educational and informational purposes only. It does <u>NOT</u> constitute medical advice, diagnosis, or treatment. No content herein should be interpreted as a substitute for professional clinical judgment. Always consult a qualified healthcare provider for medical decisions. Eye Sketchpad LLC and its contributors disclaim all liability for any actions taken based on this information. Use at your own risk. By using this site, you acknowledge and accept these terms.
+            <br><br>
+            <button id="citationsBtn" class="citations-btn" style="margin-top:1em;padding:0.7em 1.5em;font-size:1.05em;background:#800;color:#fff;border:none;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.07);cursor:pointer;font-weight:600;">View Citations</button>
+        </div>
+    </div>
+    <script src="../js/dropCapGuide.js"></script>
+</body>
+<!-- Citations Modal -->
+<div id="citationsModal" class="modal">
+    <div class="modal-content" style="max-width:700px;width:98vw;">
+        <span class="modal-close" id="citationsModalClose">&times;</span>
+        <div style="font-size:1.2em;font-weight:700;margin-bottom:0.5em;">Citations</div>
+        <div style="max-height:50vh;overflow-y:auto;font-size:0.98em;">
+            <h3 style="margin-top:1.2em;">Primary Sources</h3>
+            <ul style="padding-left:1.2em;">
+                <li><strong>Latanoprost</strong><br>
+                    <a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2012/020597s044lbl.pdf" target="_blank">FDA Label</a>,
+                    <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2639645/" target="_blank">PMC2639645</a>,
+                    <a href="https://www.ncbi.nlm.nih.gov/books/NBK540978/" target="_blank">NCBI Books</a>,
+                    <a href="https://www.drugs.com/dosage/latanoprost-ophthalmic.html" target="_blank">Drugs.com Dosage</a>,
+                    <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2915861/" target="_blank">PMC2915861</a>
+                </li>
+                <li><strong>Travoprost</strong><br>
+                    <a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2017/021994s012lbl.pdf" target="_blank">FDA Label</a>,
+                    <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2724035/" target="_blank">PMC2724035</a>,
+                    <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2694010/" target="_blank">PMC2694010</a>
+                </li>
+                <li><strong>Bimatoprost</strong><br>
+                    <a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2011/021275s022lbl.pdf" target="_blank">FDA Label</a>,
+                    <a href="https://pubmed.ncbi.nlm.nih.gov/23844550/" target="_blank">PubMed 23844550</a>
+                </li>
+                <li><strong>Tafluprost</strong><br>
+                    <a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2012/202514s000lbl.pdf" target="_blank">FDA Label</a>,
+                    <a href="https://www.drugs.com/pro/tafluprost-eye-drops.html" target="_blank">Drugs.com</a>
+                </li>
+                <li><strong>Latanoprostene bound</strong><br>
+                    <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4453588/" target="_blank">PMC4453588</a>,
+                    <a href="https://www.drugs.com/pro/vyzulta.html" target="_blank">Drugs.com</a>
+                </li>
+                <li><strong>Omidenepag isopropyl</strong><br>
+                    <a href="https://www.santen.com/content/dam/santen/global/pdf/en/news/20220926-1.pdf" target="_blank">Santen</a>,
+                    <a href="https://www.drugs.com/pro/omlonti-eye-drops.html" target="_blank">Drugs.com</a>,
+                    <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9058248/" target="_blank">PMC9058248</a>,
+                    <a href="https://pubmed.ncbi.nlm.nih.gov/40644446/" target="_blank">PubMed 40644446</a>,
+                    <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7522058/" target="_blank">PMC7522058</a>
+                </li>
+                <li><strong>Netarsudil</strong><br>
+                    <a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2017/208254lbl.pdf" target="_blank">FDA Label</a>,
+                    <a href="https://pubmed.ncbi.nlm.nih.gov/36850063/" target="_blank">PubMed 36850063</a>,
+                    <a href="https://rhopressa.myalcon.com/ecp/" target="_blank">Alcon</a>,
+                    <a href="https://pubmed.ncbi.nlm.nih.gov/39071915/" target="_blank">PubMed 39071915</a>
+                </li>
+                <li><strong>Netarsudil + Latanoprost</strong><br>
+                    <a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2019/208259s000lbl.pdf" target="_blank">FDA Label</a>
+                </li>
+                <li><strong>Timolol maleate</strong><br>
+                    <a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2016/018086s076lbl.pdf" target="_blank">FDA Label</a>,
+                    <a href="https://www.merck.com/product/usa/pi_circulars/t/timoptic/timoptic_xe_pi.pdf" target="_blank">Merck</a>
+                </li>
+                <li><strong>Levobunolol</strong><br>
+                    <a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2017/019219s029lbl.pdf" target="_blank">FDA Label</a>
+                </li>
+                <li><strong>Carteolol</strong><br>
+                    <a href="https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=5f82e53e-d6db-432f-af68-9de88d1b1720&type=pdf" target="_blank">DailyMed</a>
+                </li>
+                <li><strong>Metipranolol</strong><br>
+                    <a href="https://www.rxlist.com/optipranolol-drug.htm" target="_blank">RxList</a>,
+                    <a href="https://pubmed.ncbi.nlm.nih.gov/1680389/" target="_blank">PubMed 1680389</a>
+                </li>
+                <li><strong>Timolol maleate</strong><br>
+                    <a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2016/018086s076lbl.pdf" target="_blank">FDA Label</a>
+                </li>
+                <li><strong>Betaxolol</strong><br>
+                    <a href="https://www.ncbi.nlm.nih.gov/books/NBK557870/" target="_blank">NCBI Books</a>,
+                    <a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2021/019845s030lbl.pdf" target="_blank">FDA Label</a>,
+                    <a href="https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=31b9b263-11fd-4495-83dd-ababf0d70e9e" target="_blank">DailyMed</a>,
+                    <a href="https://pubmed.ncbi.nlm.nih.gov/3510612/" target="_blank">PubMed 3510612</a>
+                </li>
+                <li><strong>Cosopt</strong><br>
+                    <a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2010/020869s036lbl.pdf" target="_blank">FDA Label</a>,
+                    <a href="https://www.drugs.com/sfx/dorzolamide-timolol-ophthalmic-side-effects.html" target="_blank">Drugs.com</a>,
+                    <a href="https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=a8d4e2b5-c7bb-48fc-9314-7095cd77617e" target="_blank">DailyMed</a>,
+                    <a href="https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0045079" target="_blank">PLOS One</a>
+                </li>
+                <li><strong>Combigan</strong><br>
+                    <a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2015/021398s007lbl.pdf" target="_blank">FDA Label</a>,
+                    <a href="https://glaucomatoday.com/articles/2008-mar-apr/GT0308_07-php" target="_blank">Glaucoma Today</a>
+                </li>
+                <li><strong>Simbrinza</strong><br>
+                    <a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2023/204251s012lbl.pdf" target="_blank">FDA Label</a>,
+                    <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4664487/" target="_blank">PMC4664487</a>,
+                    <a href="https://www.novartis.com/sg-en/sites/novartis_sg/files/simbrinza-may2021.sin-app240322.pdf" target="_blank">Novartis</a>
+                </li>
+                <li><strong>Dorzolamide</strong><br>
+                    <a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2020/020408s052lbl.pdf" target="_blank">FDA Label</a>,
+                    <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2980431/" target="_blank">PMC2980431</a>
+                </li>
+                <li><strong>Brinzolamide</strong><br>
+                    <a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2006/020816s009lbl.pdf" target="_blank">FDA Label</a>,
+                    <a href="https://pubmed.ncbi.nlm.nih.gov/10665518/" target="_blank">PubMed 10665518</a>,
+                    <a href="https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=ec29d07f-99ac-45ed-af0a-d9b7d1a8c032" target="_blank">DailyMed</a>,
+                    <a href="https://pubmed.ncbi.nlm.nih.gov/10665518/" target="_blank">PubMed 10665518</a>
+                </li>
+                <li><strong>Brimonidine</strong><br>
+                    <a href="https://www.rxabbvie.com/pdf/alphagan_pi.pdf" target="_blank">RxAbbvie</a>,
+                    <a href="https://www.researchgate.net/publication/11452770_Twelve-Month_Evaluation_of_Brimonidine-Purite_Versus_Brimonidine_in_Patients_With_Glaucoma_or_Ocular_Hypertension" target="_blank">ResearchGate</a>,
+                    <a href="https://www.nature.com/articles/s41598-018-27436-8" target="_blank">Nature</a>,
+                    <a href="https://pubmed.ncbi.nlm.nih.gov/11641636/" target="_blank">PubMed 11641636</a>
+                </li>
+                <li><strong>Apraclonidine</strong><br>
+                    <a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2018/019779s025lbl.pdf" target="_blank">FDA Label</a>,
+                    <a href="https://journals.lww.com/jneuro-ophthalmology/fulltext/2023/12000/tachyphylaxis_with_sustained_apraclonidine_use_in.77.aspx" target="_blank">J Neuro-Ophthalmology</a>,
+                    <a href="https://webeye.ophth.uiowa.edu/eyeforum/atlas/pages/Apraclonidine-test-for-Horners/" target="_blank">UIowa EyeForum</a>
+                </li>
+                <li><strong>Pilocarpine</strong><br>
+                    <a href="https://www.accessdata.fda.gov/drugsatfda_docs/pediatric/200890_pilocarpine_clinical_PREA.pdf" target="_blank">FDA Pediatric</a>,
+                    <a href="https://reference.medscape.com/drug/isopto-carpine-vuity-pilocarpine-ophthalmic-343598" target="_blank">Medscape</a>,
+                    <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6253313/" target="_blank">PMC6253313</a>,
+                    <a href="https://pubmed.ncbi.nlm.nih.gov/35609677/" target="_blank">PubMed 35609677</a>,
+                    <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8115311/" target="_blank">PMC8115311</a>
+                </li>
+                <li><strong>Phenylephrine</strong><br>
+                    <a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2015/207926s000lbl.pdf" target="_blank">FDA Label</a>,
+                    <a href="https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=f43e4abd-0083-4fe5-9c27-0ba9245e5138" target="_blank">DailyMed</a>,
+                    <a href="https://www.reviewofoptometry.com/article/ro1117-a-red-eye-scleritis-or-episcleritis" target="_blank">Review of Optometry</a>
+                </li>
+                <li><strong>Tropicamide</strong><br>
+                    <a href="https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=329a3382-3718-4311-890f-97c6b7e0077c" target="_blank">DailyMed</a>,
+                    <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4614311/" target="_blank">PMC4614311</a>
+                </li>
+                <li><strong>Cyclopentolate</strong><br>
+                    <a href="https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=ad85b220-6003-4a78-b900-5195ceaf0fd5" target="_blank">DailyMed</a>
+                </li>
+                <li><strong>Atropine</strong><br>
+                    <a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2022/208151s003lbl.pdf" target="_blank">FDA Label</a>,
+                    <a href="https://www.researchgate.net/publication/281083836_Five-Year_Clinical_Trial_on_Atropine_for_the_Treatment_of_Myopia_2" target="_blank">ResearchGate</a>,
+                    <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4614311/" target="_blank">PMC4614311</a>,
+                    <a href="https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=c8093125-ed1a-4eb6-9c81-52c5c7376481" target="_blank">DailyMed</a>,
+                    <a href="https://www.myopiaprofile.com/articles/myopia-rebound-progressing-after-treatment" target="_blank">Myopia Profile</a>
+                </li>
+                <li><strong>Prednisone</strong><br>
+                    <a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2018/017011s050lbl.pdf" target="_blank">FDA Label</a>
+                </li>
+                <li><strong>Difluprednate</strong><br>
+                    <a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2008/022212lbl.pdf" target="_blank">FDA Label</a>
+                </li>
+                <li><strong>Loteprednol</strong><br>
+                    <a href="https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=9a666065-d467-42b8-8ecd-0ec1de9986d5" target="_blank">DailyMed</a>,
+                    <a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2020/210933s000lbl.pdf" target="_blank">FDA Label</a>
+                </li>
+                <li><strong>Fluorometholone</strong><br>
+                    <a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2013/016851s063lbl.pdf" target="_blank">FDA Label</a>
+                </li>
+                <li><strong>Ketorolac</strong><br>
+                    <a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2012/019700s028lbl.pdf" target="_blank">FDA Label</a>
+                </li>
+                <li><strong>Bromfenac</strong><br>
+                    <a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2013/203168s000lbl.pdf" target="_blank">FDA Label</a>
+                </li>
+                <li><strong>Nepafenac</strong><br>
+                    <a href="https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=f089b583-0310-4ca8-8d41-52b06b08d1ed" target="_blank">DailyMed</a>
+                </li>
+                <li><strong>Diclofenac</strong><br>
+                    <a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2012/020037s031lbl.pdf" target="_blank">FDA Label</a>
+                </li>
+                <li><strong>Moxifloxacin</strong><br>
+                    <a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2017/021598s022lbl.pdf" target="_blank">FDA Label</a>
+                </li>
+                <li><strong>Besifloxacin</strong><br>
+                    <a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2018/022308s013lbl.pdf" target="_blank">FDA Label</a>
+                </li>
+                <li><strong>Gatifloxacin</strong><br>
+                    <a href="https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=1160b16c-929a-4e85-9c0b-1d8c96a7678b" target="_blank">DailyMed</a>
+                </li>
+                <li><strong>Tobramycin</strong><br>
+                    <a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2012/050541s024lbl.pdf" target="_blank">FDA Label</a>
+                </li>
+                <li><strong>Polytrim</strong><br>
+                    <a href="https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=87999254-1857-4d3c-817a-cb8f6a5b0cf7" target="_blank">DailyMed</a>
+                </li>
+                <li><strong>Erythromycin</strong><br>
+                    <a href="https://www.drugs.com/pro/erythromycin-ophthalmic-ointment.html" target="_blank">Drugs.com</a>,
+                    <a href="https://www.cdc.gov/std/treatment-guidelines/gonorrhea-neonates.htm" target="_blank">CDC</a>
+                </li>
+                <li><strong>Proparacaine</strong><br>
+                    <a href="https://dailymed.nlm.nih.gov/dailymed/fda/fdaDrugXsl.cfm?setid=447a2a64-0507-4fe8-bb44-cc36c3916151" target="_blank">DailyMed</a>
+                </li>
+                <li><strong>Ganciclovir</strong><br>
+                    <a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2009/022211lbl.pdf" target="_blank">FDA Label</a>
+                </li>
+                <li><strong>Cyclosporine</strong><br>
+                    <a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2012/050790s020lbl.pdf" target="_blank">FDA Label</a>,
+                    <a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2018/210913s000lbl.pdf" target="_blank">FDA Label</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<script>
+// Citations Modal Logic
+const citationsBtn = document.getElementById('citationsBtn');
+const citationsModal = document.getElementById('citationsModal');
+const citationsModalClose = document.getElementById('citationsModalClose');
+citationsBtn.onclick = function() {
+    citationsModal.style.display = 'flex';
+}
+citationsModalClose.onclick = function() {
+    citationsModal.style.display = 'none';
+}
+window.onclick = function(event) {
+    if (event.target === citationsModal) {
+        citationsModal.style.display = 'none';
+    }
+}
+</script>
+</html>
