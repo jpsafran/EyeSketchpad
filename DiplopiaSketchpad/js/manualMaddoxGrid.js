@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const rodEyePicker = document.getElementById('rodEyePicker');
     const cardinalGridElement = document.getElementById('cardinalGrid');
     const headTiltGridElement = document.getElementById('headTiltGrid');
-    const analyzeMeasurementsButton = document.getElementById('analyzeMeasurementsButton');
     const analysisResultsSection = document.getElementById('analysisResultsSection');
     const diagnosticSuggestionsContainer = document.getElementById('diagnosticSuggestionsContainer');
     const resetGridButton = document.getElementById('resetGridButton');
@@ -191,7 +190,6 @@ document.addEventListener('DOMContentLoaded', () => {
             renderGrid(); // Re-render grid as signed values might change display
         });
 
-        analyzeMeasurementsButton.addEventListener('click', handleAnalyze);
         resetGridButton.addEventListener('click', resetGrid);
 
         // Modal listeners
@@ -206,14 +204,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const val = parseFloat(e.target.value) || 0;
             modalTorsionDescription.textContent = val === 0 ? "No Torsion" : (val > 0 ? "Excyclotorsion" : "Incyclotorsion");
         });
-    }
-
-    function handleAnalyze() {
-        // No password for web version
-        diagnosticSuggestions = analyzeMaddoxPatterns(measurements, rodEye); // From maddoxAnalyzer.js
-        showAnalysis = true;
-        updateUI();
-        if (analysisResultsSection) analysisResultsSection.scrollIntoView({ behavior: 'smooth' });
     }
 
     function resetGrid() {

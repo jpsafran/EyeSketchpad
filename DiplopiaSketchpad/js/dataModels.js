@@ -77,8 +77,8 @@ const PrismDirection = {
             case this.NONE: return "Ortho";
             case this.BASE_IN_OVER_NON_ROD_EYE: return "Exo";
             case this.BASE_OUT_OVER_NON_ROD_EYE: return "Eso";
-            case this.BASE_UP_OVER_NON_ROD_EYE: return "Rod Hyper / Non-Rod Hypo";
-            case this.BASE_DOWN_OVER_NON_ROD_EYE: return "Rod Hypo / Non-Rod Hyper";
+            case this.BASE_UP_OVER_NON_ROD_EYE: return "RHT";
+            case this.BASE_DOWN_OVER_NON_ROD_EYE: return "LHT";
             default: return "";
         }
     },

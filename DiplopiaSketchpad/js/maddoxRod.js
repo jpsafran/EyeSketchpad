@@ -138,11 +138,12 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (currentStep === MaddoxRodGuidedStep.RESULTS) {
             renderResultsGrid();
             renderHeadTiltResults();
-            diagnosticSuggestionsContainer.style.display = showDiagnosticSuggestions ? 'block' : 'none';
-            if (showDiagnosticSuggestions) {
-                renderDiagnosticSuggestions();
+            // Ensure Back to Last Step button event listener is attached
+            const backToLastStepButton = document.getElementById('backToLastStepButton');
+            if (backToLastStepButton) {
+                backToLastStepButton.onclick = null;
+                backToLastStepButton.addEventListener('click', goBackFromResults);
             }
-            analyzeButton.textContent = showDiagnosticSuggestions ? "Hide Pattern-Based Suggestions" : "Analyze Measurements & Show Suggestions";
         }
     }
 
@@ -440,19 +441,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     currentGazeIndex++;
                     currentStep = MaddoxRodGuidedStep.ASK_VERTICAL_QUALITATIVE;
                 } else {
-                    currentDeviationType = DeviationType.TILT;
-                    currentGazeIndex = 0;
-                    currentStep = MaddoxRodGuidedStep.ASK_TILT_QUALITATIVE;
+                    // SKIP TILT/DOUBLE MADDOX
+                    currentStep = MaddoxRodGuidedStep.RESULTS;
                 }
                 break;
             case DeviationType.TILT:
-                if (currentGazeIndex < tiltGazes.length - 1) {
-                    currentGazeIndex++; // Should not happen if tiltGazes is just [.PRIMARY]
-                    currentStep = MaddoxRodGuidedStep.ASK_TILT_QUALITATIVE;
-                } else {
-                    currentStep = MaddoxRodGuidedStep.RESULTS;
-                    handleAnalyze(); // Analyze patterns when moving to results
-                }
+                // SKIP TILT/DOUBLE MADDOX
+                currentStep = MaddoxRodGuidedStep.RESULTS;
                 break;
         }
         tempQualitativeObservation = DotLineRelationship.ALIGNED;
@@ -558,16 +553,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function goBackFromResults() {
-        if (currentStep !== MaddoxRodGuidedStep.RESULTS) return; // Should only work from results
-
-        // Go to the last quantitative input step, which is for Tilt.
-        currentDeviationType = DeviationType.TILT;
-        currentGazeIndex = tiltGazes.length - 1; // Should be 0 if tiltGazes = [PRIMARY]
-        currentStep = MaddoxRodGuidedStep.ENTER_TILT_QUANTITATIVE;
-
-        showDiagnosticSuggestions = false; // Hide suggestions
-        resetInteractiveTilt(); // Reset lenses to 90 degrees when coming back
-        updateUI(); // Update UI to show the testing section
+        if (currentStep !== MaddoxRodGuidedStep.RESULTS) return;
+        // Go to left tilt vertical qualitative step
+        currentDeviationType = DeviationType.VERTICAL;
+        currentGazeIndex = verticalGazes.indexOf(GazePosition.TILT_LEFT);
+        currentStep = MaddoxRodGuidedStep.ASK_VERTICAL_QUALITATIVE;
+        showDiagnosticSuggestions = false;
+        updateUI();
     }
 
     function setupTrialLensInteractions(lensElement, lensType) {
@@ -627,7 +619,6 @@ document.addEventListener('DOMContentLoaded', () => {
         lensElement.addEventListener('touchstart', onStart, { passive: false });
     }
     function handleAnalyze() {
-        // No password check for web version
         diagnosticSuggestions = analyzeMaddoxPatterns(measurements, eyeWithRod); // from maddoxAnalyzer.js
         showDiagnosticSuggestions = !showDiagnosticSuggestions; // Toggle
         updateUI();
