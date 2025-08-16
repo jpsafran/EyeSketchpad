@@ -926,33 +926,26 @@ document.addEventListener('DOMContentLoaded', function() {
   const copyBtn = document.getElementById('copyCaseBtn');
   if (copyBtn) {
     copyBtn.addEventListener('click', function() {
-      // Always copy plain text, not URL-encoded
-      const output = document.getElementById('output').textContent || '';
-      if (output) {
-        if (navigator.clipboard && window.isSecureContext) {
-          navigator.clipboard.writeText(output).then(function() {
-            const oldText = copyBtn.textContent;
-            copyBtn.textContent = 'Copied!';
-            setTimeout(() => { copyBtn.textContent = oldText; }, 1200);
-          }, function() {
-            alert('Failed to copy.');
-          });
-        } else {
-          // Fallback for older browsers
-          const textarea = document.createElement('textarea');
-          textarea.value = output;
-          document.body.appendChild(textarea);
-          textarea.select();
-          try {
-            document.execCommand('copy');
-            const oldText = copyBtn.textContent;
-            copyBtn.textContent = 'Copied!';
-            setTimeout(() => { copyBtn.textContent = oldText; }, 1200);
-          } catch (err) {
-            alert('Failed to copy.');
-          }
-          document.body.removeChild(textarea);
-        }
+      // Get plain text output, preserving all line breaks and spacing as shown
+      let output = document.getElementById('output').textContent;
+      // Only normalize Windows/Mac line endings to \n, but do not collapse or trim newlines
+      output = output.replace(/\r\n|\r/g, '\n');
+      const oldText = copyBtn.textContent;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(output).then(function() {
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => { copyBtn.textContent = oldText; }, 1200);
+        });
+      } else {
+        // Fallback for older browsers
+        const textarea = document.createElement('textarea');
+        textarea.value = output;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => { copyBtn.textContent = oldText; }, 1200);
       }
     });
   }
