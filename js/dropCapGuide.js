@@ -50,8 +50,53 @@ function openDropModal(category) {
     // ...existing code to populate modal content...
     document.getElementById('modal').style.display = 'flex';
 }
+function openDropModal(category, generic) {
+    const modal = document.getElementById('modal');
+    const modalContent = modal.querySelector('.modal-content');
+    if (!dropData[category]) return;
+    const cat = dropData[category];
+    // Set modal color
+    setModalColor(category);
+    // Title and desc
+    modalContent.querySelector('#modalTitle').textContent = cat.name || '';
+    modalContent.querySelector('#modalCategoryDesc').textContent = cat.desc || '';
+    // List drops
+    const dropList = modalContent.querySelector('#dropList');
+    let drops = cat.drops || [];
+    if (generic) {
+        drops = drops.filter(d => d.generic && d.generic.toLowerCase() === generic.toLowerCase());
+    }
+    if (!drops.length) {
+        dropList.innerHTML = '<div style="color:#800;font-size:1.08em;">No drop details found.</div>';
+    } else {
+        dropList.innerHTML = drops.map(drop => `
+            <div class="drop-item">
+                <div class="drop-title">${drop.generic} <span style="color:#888;font-weight:400;">(${drop.brand})</span></div>
+                <div class="drop-attr"><strong>Class:</strong> ${drop.class}</div>
+                <div class="drop-attr"><strong>Concentration:</strong> ${drop.concentration||''}</div>
+                <div class="drop-attr"><strong>Dose:</strong> ${drop.adult_dose||''}</div>
+                <div class="drop-attr"><strong>MOA:</strong> ${drop.moa||''}</div>
+                <div class="drop-attr"><strong>Ocular SE:</strong> ${drop.ocular_side_effects||''}</div>
+                <div class="drop-attr"><strong>Systemic SE:</strong> ${drop.systemic_side_effects||''}</div>
+                <div class="drop-attr"><strong>Cautions/CI:</strong> ${drop.cautions_contraindications||''}</div>
+                <div class="drop-attr"><strong>Storage/Vehicle:</strong> ${drop.storage_vehicle||''}</div>
+                <div class="drop-attr"><strong>Pearls:</strong> ${drop.pearls||''}</div>
+            </div>
+        `).join('');
+    }
+    modal.style.display = 'flex';
+    // Close button
+    const closeBtn = modalContent.querySelector('.modal-close') || document.getElementById('modalClose');
+    if (closeBtn) {
+        closeBtn.onclick = function() { modal.style.display = 'none'; };
+    }
+    // Close on outside click
+    window.onclick = function(event) {
+        if (event.target === modal) modal.style.display = 'none';
+    };
+}
 
-// Attach event listeners to dropcap-category elements
+// Attach event listeners to dropcap-category elements and search
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.dropcap-category').forEach(el => {
         el.addEventListener('click', function() {
@@ -59,6 +104,76 @@ document.addEventListener('DOMContentLoaded', function() {
             openDropModal(category);
         });
     });
+
+    // --- Improved Search Feature ---
+    const dropSearch = document.getElementById('dropSearch');
+    const searchResults = document.getElementById('searchResults');
+
+    // Helper: flatten all drops into a single array with category info
+    function getAllDrops() {
+        const drops = [];
+        for (const [catKey, cat] of Object.entries(dropData)) {
+            if (cat.drops) {
+                cat.drops.forEach(drop => {
+                    drops.push({ ...drop, catKey, catName: cat.name, capColor: cat.capColor || catKey });
+                });
+            }
+        }
+        return drops;
+    }
+
+    // Helper: highlight keyword in result
+    function highlight(text, keyword) {
+        if (!keyword) return text;
+        return text.replace(new RegExp(`(${keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'ig'), '<mark>$1</mark>');
+    }
+
+    // Render search results
+    function renderSearchResults(results, keyword) {
+        if (!searchResults) return;
+        if (!keyword) { searchResults.innerHTML = ''; return; }
+        if (!results.length) {
+            searchResults.innerHTML = '<div style="color:#800;font-size:1.08em;background:#fff8f8;border-radius:8px;padding:0.7em 1em;">No drops found for "' + keyword + '".</div>';
+            return;
+        }
+        searchResults.innerHTML = results.map(drop => `
+            <div class="drop-item" style="background:#f8f8f8;border-radius:8px;padding:0.7em 1em;margin-bottom:0.7em;cursor:pointer;box-shadow:0 1px 4px #0001;display:flex;align-items:center;gap:1em;" data-cat="${drop.catKey}" data-generic="${encodeURIComponent(drop.generic)}">
+                <span style="display:inline-block;width:22px;height:22px;border-radius:50%;background:${dropCapColors[drop.capColor]?.bg||'#eee'};border:1.5px solid #bbb;margin-right:0.7em;"></span>
+                <span style="color:#222;font-weight:600;">${highlight(drop.generic, keyword)}</span>
+                <span style="color:#666;font-size:0.97em;margin-left:0.7em;">${highlight(drop.brand, keyword)}</span>
+                <span style="color:#888;font-size:0.93em;margin-left:auto;">${highlight(drop.class||drop.catName, keyword)}</span>
+            </div>
+        `).join('');
+        // Attach click listeners to each result
+        Array.from(searchResults.querySelectorAll('.drop-item')).forEach(item => {
+            item.onclick = function() {
+                const cat = item.getAttribute('data-cat');
+                const generic = decodeURIComponent(item.getAttribute('data-generic'));
+                openDropModal(cat, generic);
+            };
+        });
+    }
+
+    // Search logic: match any keyword in generic, brand, or class/category
+    function searchDrops(keyword) {
+        if (!keyword) return [];
+        const kw = keyword.trim().toLowerCase();
+        if (!kw) return [];
+        return getAllDrops().filter(drop =>
+            (drop.generic && drop.generic.toLowerCase().includes(kw)) ||
+            (drop.brand && drop.brand.toLowerCase().includes(kw)) ||
+            (drop.class && drop.class.toLowerCase().includes(kw)) ||
+            (drop.catName && drop.catName.toLowerCase().includes(kw))
+        );
+    }
+
+    if (dropSearch) {
+        dropSearch.addEventListener('input', function() {
+            const keyword = dropSearch.value;
+            const results = searchDrops(keyword);
+            renderSearchResults(results, keyword);
+        });
+    }
 });
 const dropData = {
     teal: {
