@@ -124,6 +124,11 @@
         <header class="dropcap-header">
             <h1>Ophthalmic Drop Cap Guide</h1>
             <p>Click a cap color to view its drug category and drops. Select a drop for details.</p>
+            <div style="position:relative;max-width:400px;margin:1.2em auto 0 auto;">
+                <input id="dropSearch" type="text" placeholder="Search by drug, brand, or class..." style="width:100%;padding:0.7em 2.2em 0.7em 1em;font-size:1.08em;border-radius:8px;border:1px solid #bbb;box-shadow:0 2px 8px rgba(0,0,0,0.04);" autocomplete="off">
+                <button id="clearSearchBtn" type="button" style="position:absolute;right:0.3em;top:50%;transform:translateY(-50%);background:none;border:none;padding:0;margin:0;font-size:1.3em;color:#888;cursor:pointer;">&times;</button>
+            </div>
+            <div id="searchResults" style="margin:1.2em auto 0 auto;max-width:600px;"></div>
             <button id="quizModeBtn" style="margin-top:1em;padding:0.6em 1.4em;font-size:1.08em;background:#008080;color:#fff;border:none;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.07);cursor:pointer;font-weight:600;transition:background 0.2s;">Quiz Mode!</button>
         </header>
         <section>
@@ -172,6 +177,24 @@
         </div>
     </div>
     <script src="../js/dropCapGuide.js"></script>
+<script>
+// Clear search input and results when X button is clicked
+document.addEventListener('DOMContentLoaded', function() {
+  var clearBtn = document.getElementById('clearSearchBtn');
+  var searchInput = document.getElementById('dropSearch');
+  var searchResults = document.getElementById('searchResults');
+  if (clearBtn && searchInput && searchResults) {
+    clearBtn.addEventListener('click', function() {
+      searchInput.value = '';
+      searchResults.innerHTML = '';
+      searchInput.focus();
+      // Optionally, trigger any search update logic if needed
+      var event = new Event('input', { bubbles: true });
+      searchInput.dispatchEvent(event);
+    });
+  }
+});
+</script>
 </body>
 <!-- Citations Modal -->
 <div id="citationsModal" class="modal">

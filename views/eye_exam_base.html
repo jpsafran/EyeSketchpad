@@ -568,12 +568,7 @@
       attachAllAutoUpdate();
       updateFindingsOutput();
     };
-    function emailReport() {
-      const output = generateOutput();
-      const subject = encodeURIComponent('Eye Exam Report');
-      const body = encodeURIComponent(output);
-      window.location.href = `mailto:?subject=${subject}&body=${body}`;
-    }
+    // Removed emailReport function and mailto logic to prevent URL encoding issues
 
     // Exam findings logic
     const findingsFields = [
