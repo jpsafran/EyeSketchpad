@@ -926,6 +926,27 @@ document.addEventListener('DOMContentLoaded', function() {
       // Only normalize Windows/Mac line endings to \n, but do not collapse or trim newlines
       output = output.replace(/\r\n|\r/g, '\n');
       const oldText = copyBtn.textContent;
+      // Detect mobile device
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      if (isMobile) {
+        // Always use textarea method on mobile for best compatibility
+        const textarea = document.createElement('textarea');
+        textarea.value = output;
+        textarea.style.position = 'fixed'; // Prevent scrolling to bottom of page in MS Edge
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        try {
+          document.execCommand('copy');
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => { copyBtn.textContent = oldText; }, 1200);
+        } catch (err) {
+          alert('Failed to copy. Please copy manually.');
+        }
+        document.body.removeChild(textarea);
+        return;
+      }
       if (navigator.clipboard) {
         navigator.clipboard.writeText(output).then(function() {
           copyBtn.textContent = 'Copied!';
