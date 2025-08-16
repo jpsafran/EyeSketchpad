@@ -28,16 +28,38 @@
 </head>
 <body>
   <div class="container">
-    <nav style="margin-bottom:1.5em;">
-      <a href="../index.html" style="background: #00A6A6; color: #fff; text-decoration: none; font-weight: 600; font-size: 1.05em; padding: 0.5em 1.2em; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); display: inline-block; transition: background 0.2s, color 0.2s;">
-        &larr; Back to Eye Sketchpad Home
-      </a>
+    <nav style="margin-bottom:1.5em; display:flex; justify-content:space-between; align-items:center;">
+      <a href="../index.html" style="background: #00A6A6; color: #fff; text-decoration: none; font-weight: 600; font-size: 1.05em; padding: 0.5em 1.2em; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); display: inline-block; transition: background 0.2s, color 0.2s;">&larr; Back to Eye Sketchpad Home</a>
+      <button id="citationsBtn" type="button" style="background:#008080; color:#fff; border:none; border-radius: 8px; font-weight:600; font-size:1.05em; padding:0.5em 1.2em; box-shadow: 0 2px 8px rgba(0,0,0,0.07); cursor:pointer; transition: background 0.2s;">Citations</button>
     </nav>
+    <!-- Citations Modal -->
+    <div id="citationsModal" style="display:none; position:fixed; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.25); z-index:1000; align-items:center; justify-content:center;">
+      <div style="background:#fff; border-radius:16px; box-shadow:0 6px 32px #0003; width:95%; max-width:370px; min-width:0; padding:28px 20px 20px 20px; margin:auto; position:relative; display:flex; flex-direction:column; align-items:center;">
+        <button id="closeCitationsModal" type="button" style="position:absolute; top:10px; right:14px; background:none; border:none; font-size:1.5em; color:#888; cursor:pointer;">&times;</button>
+        <strong style="font-size:1.18em; color:#008080; margin-bottom:0.7em;">References & Citations</strong>
+        <ul style="margin:0.7em 0 0.7em 0; padding:0; list-style:none; text-align:left; width:100%;">
+          <li style="margin-bottom:0.5em;"><a href="https://eyewiki.aao.org/Main_Page" target="_blank" rel="noopener" style="color:#008080; text-decoration:underline;">EyeWiki</a></li>
+          <li><a href="https://eyerounds.org/" target="_blank" rel="noopener" style="color:#008080; text-decoration:underline;">EyeRounds</a></li>
+        </ul>
+        <div style="margin-top:1.1em; color:#a00; font-size:0.98em; text-align:left; width:100%;">
+          <strong>Disclaimer:</strong> All cases and information are for educational purposes only. This tool is not a substitute for professional clinical judgment, diagnosis, or treatment. Always consult appropriate resources and use your own clinical expertise.
+        </div>
+      </div>
+    </div>
     <h1>Eye Exam Sketchpad</h1>
     <div style="margin-bottom:1em; color:#888; font-size:0.98em; text-align:center;">
       <strong>Disclaimer:</strong> This tool is for educational and training purposes only. It is not intended for patient documentation or clinical use.
     </div>
     <form id="examForm" autocomplete="off">
+      <!-- ...existing code... -->
+  <style>
+    .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .2s; border-radius: 24px; }
+    .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .2s; border-radius: 50%; }
+    input:checked + .slider { background-color: #00A6A6; }
+    input:checked + .slider:before { transform: translateX(20px); }
+  </style>
       <label>Visual Acuity (OD | OS)</label>
       <div class="row">
         <div><input id="vaOD" placeholder="OD (e.g. 20/20)" /></div>
@@ -136,7 +158,123 @@
           <option value="Other">Other</option>
         </select>
       </label>
-      <button type="button" class="exam-btn" style="background:#005f5f;margin-top:10px;" onclick="emailReport()">Export</button>
+    <!-- Slit Lamp Exam Checkbox and Findings Section -->
+    <div style="margin-top:2em;">
+      <label style="font-weight:600; color:#008080; display:flex; align-items:center; gap:10px;">
+        <input type="checkbox" id="showFindingsSection" style="width:18px; height:18px; margin-right:8px;" />
+        Slit Lamp Exam
+      </label>
+    </div>
+    <div id="findingsEntrySection" style="display:none; margin-top:1em; background:#f8f8f8; border-radius:10px; box-shadow:0 1px 6px #0001; padding:18px 12px 12px 12px;">
+      <div style="font-weight:600; color:#008080; font-size:1.08em; margin-bottom:8px;">Enter Exam Findings</div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <label style="font-weight:500; color:#008080;">Example Cases
+          <div style="display:flex; gap:8px; align-items:center; margin-top:6px;">
+            <select id="exampleCase" style="flex:1; border-radius:6px; border:1px solid #bbb; padding:7px;">
+              <option value="normal">-- None (Normal) --</option>
+              <option value="acanthamoeba_keratitis">Acanthamoeba Keratitis</option>
+              <option value="acute_angle_closure">Acute Angle Closure</option>
+              <option value="alkali_burn">Alkali Burn</option>
+              <option value="anterior_uveitis_HLA_B27">Anterior Uveitis (HLA-B27)</option>
+              <option value="BRVO">BRVO</option>
+              <option value="CMV_retinitis">CMV Retinitis</option>
+              <option value="commotio_retinae">Commotio Retinae</option>
+              <option value="corneal_foreign_body">Corneal Foreign Body</option>
+              <option value="corneal_ulcer_bacterial">Bacterial Corneal Ulcer</option>
+              <option value="CRAO">CRAO</option>
+              <option value="CRVO">CRVO</option>
+              <option value="dacryocystitis">Dacryocystitis</option>
+              <option value="diabetic_retinopathy">Diabetic Retinopathy</option>
+              <option value="endophthalmitis_postop">Postop Endophthalmitis</option>
+              <option value="endothelitis_herpetic">Herpetic Endothelitis</option>
+              <option value="episcleritis">Episcleritis</option>
+              <option value="facial_trauma">Facial Trauma</option>
+              <option value="fungal_keratitis">Fungal Keratitis</option>
+              <option value="hyphema">Hyphema</option>
+              <option value="HZO_keratitis_uveitis">HZO Keratitis/Uveitis</option>
+              <option value="hypertensive_retinopathy">Hypertensive Retinopathy</option>
+              <option value="marginal_keratitis_staph">Marginal Keratitis (Staph)</option>
+              <option value="neovascular_glaucoma">Neovascular Glaucoma</option>
+              <option value="ocular_ischemic_syndrome">Ocular Ischemic Syndrome</option>
+              <option value="ocular_toxoplasmosis">Ocular Toxoplasmosis</option>
+              <option value="open_globe_injury">Open Globe Injury</option>
+              <option value="optic_neuritis">Optic Neuritis</option>
+              <option value="orbital_cellulitis">Orbital Cellulitis</option>
+              <option value="papilledema_IIH">Papilledema (IIH)</option>
+              <option value="photokeratitis_UV">Photokeratitis (UV)</option>
+              <option value="plateau_iris">Plateau Iris</option>
+              <option value="posner_schlossman_PSS">Posner-Schlossman (PSS)</option>
+              <option value="posterior_vitreous_detachment">Posterior Vitreous Detachment</option>
+              <option value="preseptal_cellulitis">Preseptal Cellulitis</option>
+              <option value="retinal_detachment_rhegmatogenous">Rhegmatogenous Retinal Detachment</option>
+              <option value="scleritis">Scleritis</option>
+              <option value="thyroid_eye_disease_exposure">Thyroid Eye Disease (Exposure)</option>
+              <option value="topiramate_angle_closure">Topiramate Angle Closure</option>
+              <option value="traumatic_iritis">Traumatic Iritis</option>
+              <option value="vitreous_hemorrhage">Vitreous Hemorrhage</option>
+            </select>
+            <select id="exampleEye" style="width:70px; border-radius:6px; border:1px solid #bbb; padding:7px;">
+              <option value="OD">OD</option>
+              <option value="OS">OS</option>
+              <option value="OU">OU</option>
+            </select>
+          </div>
+        </label>
+        <!-- Anterior Exam Fields -->
+        <div style="font-weight:600; color:#444; margin-top:8px;">Anterior Exam</div>
+        <div class="row">
+          <div><label>Ext OD<input id="sleExtOD" placeholder="normal" /></label></div>
+          <div><label>Ext OS<input id="sleExtOS" placeholder="normal" /></label></div>
+        </div>
+        <div class="row">
+          <div><label>L/L OD<input id="sleLLOD" placeholder="normal" /></label></div>
+          <div><label>L/L OS<input id="sleLLOS" placeholder="normal" /></label></div>
+        </div>
+        <div class="row">
+          <div><label>C/S OD<input id="sleCSOD" placeholder="white and quiet" /></label></div>
+          <div><label>C/S OS<input id="sleCSOS" placeholder="white and quiet" /></label></div>
+        </div>
+        <div class="row">
+          <div><label>K OD<input id="sleCorneaOD" placeholder="clear" /></label></div>
+          <div><label>K OS<input id="sleCorneaOS" placeholder="clear" /></label></div>
+        </div>
+        <div class="row">
+          <div><label>A/C OD<input id="sleACOD" placeholder="well formed and without hyphema or hypopyon" /></label></div>
+          <div><label>A/C OS<input id="sleACOS" placeholder="well formed and without hyphema or hypopyon" /></label></div>
+        </div>
+        <div class="row">
+          <div><label>Iris OD<input id="sleIrisOD" placeholder="round and reactive" /></label></div>
+          <div><label>Iris OS<input id="sleIrisOS" placeholder="round and reactive" /></label></div>
+        </div>
+        <div class="row">
+          <div><label>Lens OD<input id="sleLensOD" placeholder="clear" /></label></div>
+          <div><label>Lens OS<input id="sleLensOS" placeholder="clear" /></label></div>
+        </div>
+        <!-- DFE Fields -->
+        <div style="font-weight:600; color:#444; margin-top:16px;">DFE</div>
+        <div class="row">
+          <div><label>Vit OD<input id="dfeVitOD" placeholder="clear" /></label></div>
+          <div><label>Vit OS<input id="dfeVitOS" placeholder="clear" /></label></div>
+        </div>
+        <div class="row">
+          <div><label>Disc OD<input id="dfeDiscOD" placeholder="pink, sharp margins, C/D: 0.3" /></label></div>
+          <div><label>Disc OS<input id="dfeDiscOS" placeholder="pink, sharp margins, C/D: 0.3" /></label></div>
+        </div>
+        <div class="row">
+          <div><label>Macula OD<input id="dfeMaculaOD" placeholder="Flat" /></label></div>
+          <div><label>Macula OS<input id="dfeMaculaOS" placeholder="Flat" /></label></div>
+        </div>
+        <div class="row">
+          <div><label>Vessels OD<input id="dfeVesselsOD" placeholder="Normal" /></label></div>
+          <div><label>Vessels OS<input id="dfeVesselsOS" placeholder="Normal" /></label></div>
+        </div>
+        <div class="row">
+          <div><label>Periphery OD<input id="dfePeripheryOD" placeholder="No retinal tear, holes or breaks seen, no retinal hemorrhage or associated lesions" /></label></div>
+          <div><label>Periphery OS<input id="dfePeripheryOS" placeholder="No retinal tear, holes or breaks seen, no retinal hemorrhage or associated lesions" /></label></div>
+        </div>
+      </div>
+    </div>
+    <button type="button" class="exam-btn" style="background:#008080;margin-top:10px;" onclick="exportWithExamFindings()">Export</button>
     </form>
     <div class="output-label">Exam Output</div>
     <div class="output" id="output"></div>
@@ -402,10 +540,33 @@
         el.addEventListener('change', generateOutput);
       });
     }
+    function attachAllAutoUpdate() {
+      // Attach updateFindingsOutput to all input/select/textarea
+      document.querySelectorAll('input, select, textarea').forEach(el => {
+        el.addEventListener('input', updateFindingsOutput);
+        el.addEventListener('change', updateFindingsOutput);
+      });
+      // Show/hide findings section on checkbox
+      const findingsCheckbox = document.getElementById('showFindingsSection');
+      if (findingsCheckbox) {
+        findingsCheckbox.addEventListener('change', function() {
+          document.getElementById('findingsEntrySection').style.display = findingsCheckbox.checked ? '' : 'none';
+          updateFindingsOutput();
+        });
+      }
+      // Also update output after any grid interaction (EOM/CVF)
+      ['eomGridOD','eomGridOS','cvfGridOD','cvfGridOS'].forEach(id => {
+        const grid = document.getElementById(id);
+        if (grid) {
+          grid.addEventListener('click', updateFindingsOutput);
+        }
+      });
+    }
+
     window.onload = function() {
       initializeGrids();
-      attachAutoUpdate();
-      generateOutput();
+      attachAllAutoUpdate();
+      updateFindingsOutput();
     };
     function emailReport() {
       const output = generateOutput();
@@ -413,7 +574,450 @@
       const body = encodeURIComponent(output);
       window.location.href = `mailto:?subject=${subject}&body=${body}`;
     }
+
+    // Exam findings logic
+    const findingsFields = [
+      { key: 'Ext', label: 'Ext', normal: 'normal' },
+      { key: 'L/L', label: 'L/L', normal: 'normal' },
+      { key: 'C/S', label: 'C/S', normal: 'white and quiet' },
+      { key: 'K', label: 'K', normal: 'clear' },
+      { key: 'A/C', label: 'A/C', normal: 'well formed and without hyphema or hypopyon' },
+      { key: 'Iris', label: 'Iris', normal: 'round and reactive' },
+      { key: 'Lens', label: 'Lens', normal: 'clear' }
+    ];
+    const dfeFields = [
+      { key: 'Vit', label: 'Vit', normal: 'clear' },
+      { key: 'Disc', label: 'Disc', normal: 'pink, sharp margins, C/D: 0.3' },
+      { key: 'Macula', label: 'Macula', normal: 'Flat' },
+      { key: 'Vessels', label: 'Vessels', normal: 'Normal' },
+      { key: 'Periphery', label: 'Periphery', normal: 'No retinal tear, holes or breaks seen, no retinal hemorrhage or associated lesions' }
+    ];
+    const caseFindings = {
+      normal: {
+        Ext: { OD: 'normal', OS: 'normal' },
+        'L/L': { OD: 'normal', OS: 'normal' },
+        'C/S': { OD: 'white and quiet', OS: 'white and quiet' },
+        K: { OD: 'clear', OS: 'clear' },
+        'A/C': { OD: 'well formed and without hyphema or hypopyon', OS: 'well formed and without hyphema or hypopyon' },
+        Iris: { OD: 'round and reactive', OS: 'round and reactive' },
+        Lens: { OD: 'clear', OS: 'clear' },
+        Vit: { OD: 'clear', OS: 'clear' },
+        Disc: { OD: 'pink, sharp margins, C/D: 0.3', OS: 'pink, sharp margins, C/D: 0.3' },
+        Macula: { OD: 'Flat', OS: 'Flat' },
+        Vessels: { OD: 'Normal', OS: 'Normal' },
+        Periphery: { OD: 'No retinal tear, holes or breaks seen, no retinal hemorrhage or associated lesions', OS: 'No retinal tear, holes or breaks seen, no retinal hemorrhage or associated lesions' }
+      },
+      endothelitis_herpetic: {
+        'C/S': { OD: 'ciliary flush', OS: 'ciliary flush' },
+        K: { OD: 'stromal edema; Descemet’s folds; central coin-shaped KPs; endothelial plaque', OS: 'stromal edema; Descemet’s folds; central coin-shaped KPs; endothelial plaque' },
+        'A/C': { OD: '1+ cell/flare', OS: '1+ cell/flare' },
+      },
+      facial_trauma: {
+        Ext: { OD: 'periorbital ecchymosis/edema', OS: 'periorbital ecchymosis/edema' },
+        'L/L': { OD: 'lid laceration; edema', OS: 'lid laceration; edema' },
+        'C/S': { OD: '360° subconjunctival hemorrhage; chemosis', OS: '360° subconjunctival hemorrhage; chemosis' },
+        K: { OD: 'epithelial abrasion; edema', OS: 'epithelial abrasion; edema' },
+        'A/C': { OD: 'microhyphema layering; shallow chamber', OS: 'microhyphema layering; shallow chamber' },
+        Iris: { OD: 'sphincter tears; iridodialysis; Vossius ring', OS: 'sphincter tears; iridodialysis; Vossius ring' },
+        Lens: { OD: 'traumatic cataract; phacodonesis/subluxation', OS: 'traumatic cataract; phacodonesis/subluxation' },
+        Vit: { OD: 'vitreous hemorrhage', OS: 'vitreous hemorrhage' },
+        Macula: { OD: 'commotio retinae (Berlin edema)', OS: 'commotio retinae (Berlin edema)' },
+        Periphery: { OD: 'retinal dialysis; horseshoe tear', OS: 'retinal dialysis; horseshoe tear' }
+      },
+      corneal_ulcer_bacterial: {
+        'C/S': { OD: 'conjunctival injection; mucopurulent discharge', OS: 'conjunctival injection; mucopurulent discharge' },
+        K: { OD: 'stromal infiltrate with overlying epithelial defect; rolled edges; endothelial plaque', OS: 'stromal infiltrate with overlying epithelial defect; rolled edges; endothelial plaque' },
+        'A/C': { OD: 'hypopyon; fibrin', OS: 'hypopyon; fibrin' }
+      },
+      fungal_keratitis: {
+        'C/S': { OD: 'conjunctival injection', OS: 'conjunctival injection' },
+        K: { OD: 'gray-white infiltrate with feathery margins; satellite lesions; dry/sloughing surface', OS: 'gray-white infiltrate with feathery margins; satellite lesions; dry/sloughing surface' },
+        'A/C': { OD: 'hypopyon', OS: 'hypopyon' }
+      },
+      acanthamoeba_keratitis: {
+        K: { OD: 'punctate epitheliopathy; perineuritis (radial keratoneuritis); paracentral ring infiltrate', OS: 'punctate epitheliopathy; perineuritis (radial keratoneuritis); paracentral ring infiltrate' }
+      },
+      photokeratitis_UV: {
+        K: { OD: 'diffuse interpalpebral PEE', OS: 'diffuse interpalpebral PEE' }
+      },
+      alkali_burn: {
+        'C/S': { OD: 'blanched perilimbal ischemia; conjunctival chemosis', OS: 'blanched perilimbal ischemia; conjunctival chemosis' },
+        K: { OD: 'epithelial sloughing; stromal haze/edema', OS: 'epithelial sloughing; stromal haze/edema' },
+        'A/C': { OD: '1+ cell/flare', OS: '1+ cell/flare' }
+      },
+      marginal_keratitis_staph: {
+        'L/L': { OD: 'anterior blepharitis, collarettes', OS: 'anterior blepharitis, collarettes' },
+        K: { OD: 'peripheral arcuate subepithelial infiltrates with 1-mm clear limbal zone', OS: 'peripheral arcuate subepithelial infiltrates with 1-mm clear limbal zone' }
+      },
+      episcleritis: {
+        'C/S': { OD: 'sectoral superficial injection; blanches with phenylephrine; minimal tenderness', OS: 'sectoral superficial injection; blanches with phenylephrine; minimal tenderness' }
+      },
+      scleritis: {
+        'C/S': { OD: 'diffuse/deep violaceous injection that does not blanch; focal nodules; marked tenderness', OS: 'diffuse/deep violaceous injection that does not blanch; focal nodules; marked tenderness' }
+      },
+      anterior_uveitis_HLA_B27: {
+        'C/S': { OD: 'ciliary flush', OS: 'ciliary flush' },
+        K: { OD: 'fine nongranulomatous KPs', OS: 'fine nongranulomatous KPs' },
+        'A/C': { OD: '3+ cells/flare; fibrin; hypopyon', OS: '3+ cells/flare; fibrin; hypopyon' },
+        Iris: { OD: 'posterior synechiae; small pupil', OS: 'posterior synechiae; small pupil' }
+      },
+      endophthalmitis_postop: {
+        'C/S': { OD: 'conjunctival injection', OS: 'conjunctival injection' },
+        K: { OD: 'corneal edema; endothelial debris', OS: 'corneal edema; endothelial debris' },
+        'A/C': { OD: 'hypopyon; fibrin', OS: 'hypopyon; fibrin' },
+        Vit: { OD: 'dense vitritis; hazy media; poor fundus view', OS: 'dense vitritis; hazy media; poor fundus view' }
+      },
+      acute_angle_closure: {
+        'C/S': { OD: 'ciliary flush', OS: 'ciliary flush' },
+        K: { OD: 'microcystic corneal edema', OS: 'microcystic corneal edema' },
+        'A/C': { OD: 'shallow centrally and peripherally', OS: 'shallow centrally and peripherally' },
+        Iris: { OD: 'mid-dilated, sluggish pupil', OS: 'mid-dilated, sluggish pupil' }
+      },
+      posner_schlossman_PSS: {
+        K: { OD: 'few fine KPs; cornea clear', OS: 'few fine KPs; cornea clear' },
+        'A/C': { OD: 'trace cells', OS: 'trace cells' },
+        Iris: { OD: 'marked IOP elevation disproportionate to inflammation', OS: 'marked IOP elevation disproportionate to inflammation' }
+      },
+      topiramate_angle_closure: {
+        'A/C': { OD: 'shallow chamber; closed angle without pupillary block', OS: 'shallow chamber; closed angle without pupillary block' },
+        K: { OD: 'corneal edema', OS: 'corneal edema' },
+        Lens: { OD: 'acute myopic shift', OS: 'acute myopic shift' }
+      },
+      plateau_iris: {
+        'A/C': { OD: 'crowded angle; flat central AC with steep peripheral drop-off; iridotrabecular contact', OS: 'crowded angle; flat central AC with steep peripheral drop-off; iridotrabecular contact' }
+      },
+      neovascular_glaucoma: {
+        Iris: { OD: 'rubeosis iridis at pupillary margin; ectropion uveae', OS: 'rubeosis iridis at pupillary margin; ectropion uveae' },
+        'A/C': { OD: 'peripheral anterior synechiae; NVA on gonioscopy', OS: 'peripheral anterior synechiae; NVA on gonioscopy' }
+      },
+      vitreous_hemorrhage: {
+        Vit: { OD: 'diffuse vitreous blood; red haze/obscured fundus', OS: 'diffuse vitreous blood; red haze/obscured fundus' }
+      },
+      retinal_detachment_rhegmatogenous: {
+        Vit: { OD: 'Shafer sign positive', OS: 'Shafer sign positive' },
+        Macula: { OD: 'macula off/on', OS: 'macula off/on' },
+        Periphery: { OD: 'corrugated elevated retina; horseshoe tear', OS: 'corrugated elevated retina; horseshoe tear' }
+      },
+      posterior_vitreous_detachment: {
+        Vit: { OD: 'Weiss ring; vitreous syneresis; Shafer sign negative', OS: 'Weiss ring; vitreous syneresis; Shafer sign negative' },
+        Periphery: { OD: 'no retinal tear seen', OS: 'no retinal tear seen' }
+      },
+      commotio_retinae: {
+        Macula: { OD: 'gray-white outer retinal whitening (Berlin edema); foveal granularity', OS: 'gray-white outer retinal whitening (Berlin edema); foveal granularity' }
+      },
+      CRVO: {
+        Disc: { OD: 'hyperemic disc edema', OS: 'hyperemic disc edema' },
+        Vessels: { OD: 'dilated tortuous veins', OS: 'dilated tortuous veins' },
+        Macula: { OD: 'macular edema', OS: 'macular edema' },
+        Periphery: { OD: 'diffuse intraretinal hemorrhages; cotton-wool spots', OS: 'diffuse intraretinal hemorrhages; cotton-wool spots' }
+      },
+      BRVO: {
+        Vessels: { OD: 'dilated/tortuous vein in affected sector', OS: 'dilated/tortuous vein in affected sector' },
+        Periphery: { OD: 'sectoral intraretinal hemorrhages and cotton-wool spots along occluded branch', OS: 'sectoral intraretinal hemorrhages and cotton-wool spots along occluded branch' },
+        Macula: { OD: 'sectoral macular edema', OS: 'sectoral macular edema' }
+      },
+      CRAO: {
+        Macula: { OD: 'cherry-red spot', OS: 'cherry-red spot' },
+        Vessels: { OD: 'arteriolar attenuation; boxcarring/segmentation', OS: 'arteriolar attenuation; boxcarring/segmentation' },
+        Periphery: { OD: 'posterior pole retinal whitening', OS: 'posterior pole retinal whitening' }
+      },
+      hypertensive_retinopathy: {
+        Vessels: { OD: 'generalized/focal arteriolar narrowing; AV nicking; copper/silver wiring', OS: 'generalized/focal arteriolar narrowing; AV nicking; copper/silver wiring' },
+        Periphery: { OD: 'flame hemes; cotton-wool spots; hard exudates; macular star', OS: 'flame hemes; cotton-wool spots; hard exudates; macular star' },
+        Disc: { OD: 'disc edema in malignant hypertension', OS: 'disc edema in malignant hypertension' }
+      },
+      diabetic_retinopathy: {
+        Vessels: { OD: 'microaneurysms; dot-blot hemes; venous beading; IRMA; NVD/NVE possible', OS: 'microaneurysms; dot-blot hemes; venous beading; IRMA; NVD/NVE possible' },
+        Macula: { OD: 'diabetic macular edema; circinate hard exudates', OS: 'diabetic macular edema; circinate hard exudates' },
+        Periphery: { OD: 'scattered blot hemes; cotton-wool spots in severe NPDR', OS: 'scattered blot hemes; cotton-wool spots in severe NPDR' }
+      },
+      ocular_toxoplasmosis: {
+        Periphery: { OD: 'focal white “fluffy” retinitis adjacent to pigmented scar (“satellite”); overlying dense vitritis (“headlight in fog”)', OS: 'focal white “fluffy” retinitis adjacent to pigmented scar (“satellite”); overlying dense vitritis (“headlight in fog”)' }
+      },
+      CMV_retinitis: {
+        Periphery: { OD: 'granular white necrotizing retinitis with hemorrhage (“pizza-pie/cheese-and-ketchup”); perivascular sheathing', OS: 'granular white necrotizing retinitis with hemorrhage (“pizza-pie/cheese-and-ketchup”); perivascular sheathing' }
+      },
+      optic_neuritis: {
+        Iris: { OD: 'RAPD', OS: 'RAPD' },
+        Disc: { OD: 'papillitis pattern: hyperemic swollen disc; blurred margins 360°; peripapillary flame hemes; RNFL edema; loss of physiologic cup; vessel obscuration at the disc', OS: 'papillitis pattern: hyperemic swollen disc; blurred margins 360°; peripapillary flame hemes; RNFL edema; loss of physiologic cup; vessel obscuration at the disc' },
+        Vessels: { OD: 'venous congestion at disc in papillitis; SVP reduced', OS: 'venous congestion at disc in papillitis; SVP reduced' }
+      },
+      papilledema_IIH: {
+        Disc: { OD: 'elevated hyperemic disc; blurred margins (Frisén grade as applicable); circumferential nerve fiber layer edema; peripapillary splinter hemorrhages; cotton-wool spots; Paton lines (peripapillary wrinkles); buried disc vessels; absent SVP', OS: 'elevated hyperemic disc; blurred margins (Frisén grade as applicable); circumferential nerve fiber layer edema; peripapillary splinter hemorrhages; cotton-wool spots; Paton lines (peripapillary wrinkles); buried disc vessels; absent SVP' },
+        Macula: { OD: 'peripapillary subretinal fluid; choroidal folds possible', OS: 'peripapillary subretinal fluid; choroidal folds possible' },
+        Vessels: { OD: 'venous engorgement', OS: 'venous engorgement' }
+      },
+      ocular_ischemic_syndrome: {
+        Vessels: { OD: 'narrowed arteries; dilated but not tortuous veins', OS: 'narrowed arteries; dilated but not tortuous veins' },
+        Periphery: { OD: 'mid-peripheral dot-blot hemes; microaneurysms', OS: 'mid-peripheral dot-blot hemes; microaneurysms' },
+        Iris: { OD: 'rubeosis possible', OS: 'rubeosis possible' }
+      },
+      thyroid_eye_disease_exposure: {
+        'L/L': { OD: 'lid retraction; lagophthalmos', OS: 'lid retraction; lagophthalmos' },
+        'C/S': { OD: 'injection over rectus insertions', OS: 'injection over rectus insertions' },
+        K: { OD: 'interpalpebral PEE/exposure keratopathy', OS: 'interpalpebral PEE/exposure keratopathy' }
+      },
+      dacryocystitis: {
+        Ext: { OD: 'medial canthal swelling/tender lacrimal sac; mucopurulent reflux on sac pressure', OS: 'medial canthal swelling/tender lacrimal sac; mucopurulent reflux on sac pressure' }
+      },
+      orbital_cellulitis: {
+        Ext: { OD: 'proptosis; eyelid edema/erythema; pain with EOM; ophthalmoplegia; fever', OS: 'proptosis; eyelid edema/erythema; pain with EOM; ophthalmoplegia; fever' },
+        'C/S': { OD: 'chemosis', OS: 'chemosis' }
+      },
+      preseptal_cellulitis: {
+        Ext: { OD: 'eyelid edema/erythema without proptosis or motility restriction', OS: 'eyelid edema/erythema without proptosis or motility restriction' }
+      },
+      open_globe_injury: {
+        'C/S': { OD: '360° subconjunctival hemorrhage', OS: '360° subconjunctival hemorrhage' },
+        K: { OD: 'full-thickness corneal/scleral wound; positive Seidel', OS: 'full-thickness corneal/scleral wound; positive Seidel' },
+        'A/C': { OD: 'shallow/flat; hyphema', OS: 'shallow/flat; hyphema' },
+        Iris: { OD: 'peaked pupil toward wound; iris prolapse', OS: 'peaked pupil toward wound; iris prolapse' }
+      },
+      corneal_foreign_body: {
+        K: { OD: 'metallic foreign body with rust ring; epithelial defect at impact site', OS: 'metallic foreign body with rust ring; epithelial defect at impact site' }
+      },
+      hyphema: {
+        'A/C': { OD: 'layered hyphema with RBCs; clots; microhyphema on slit beam', OS: 'layered hyphema with RBCs; clots; microhyphema on slit beam' },
+        Iris: { OD: 'sphincter tears possible', OS: 'sphincter tears possible' }
+      },
+      traumatic_iritis: {
+        'A/C': { OD: 'cells/flare; fibrin possible', OS: 'cells/flare; fibrin possible' },
+        Iris: { OD: 'RAPD may be present; posterior synechiae possible', OS: 'RAPD may be present; posterior synechiae possible' },
+        Lens: { OD: 'Vossius ring on anterior capsule', OS: 'Vossius ring on anterior capsule' }
+      },
+      HZO_keratitis_uveitis: {
+        K: { OD: 'pseudodendrites; punctate/filamentary keratitis; neurotrophic changes', OS: 'pseudodendrites; punctate/filamentary keratitis; neurotrophic changes' },
+        'A/C': { OD: 'cells/flare', OS: 'cells/flare'}
+      }
+    };
+
+    // Compose findings from entry fields
+    function getODOSLine(label, od, os) {
+      if (od && os && od === os) {
+        return `${label}: ${od} OU`;
+      } else if (od || os) {
+        let out = label + ': ';
+        if (od) out += od + ' OD';
+        if (od && os) out += ' | ';
+        if (os) out += os + ' OS';
+        return out;
+      } else {
+        return '';
+      }
+    }
+
+    function getFindingsFromFields() {
+      let lines = [];
+      // Anterior Segment (Ext, L/L, C/S, K, A/C, Iris, Lens)
+      lines.push('Anterior Exam');
+      let sleExtOD = document.getElementById('sleExtOD') ? document.getElementById('sleExtOD').value.trim() : '';
+      let sleExtOS = document.getElementById('sleExtOS') ? document.getElementById('sleExtOS').value.trim() : '';
+      let sleLLOD = document.getElementById('sleLLOD') ? document.getElementById('sleLLOD').value.trim() : '';
+      let sleLLOS = document.getElementById('sleLLOS') ? document.getElementById('sleLLOS').value.trim() : '';
+      let sleCSOD = document.getElementById('sleCSOD') ? document.getElementById('sleCSOD').value.trim() : '';
+      let sleCSOS = document.getElementById('sleCSOS') ? document.getElementById('sleCSOS').value.trim() : '';
+      let sleKOD = document.getElementById('sleCorneaOD') ? document.getElementById('sleCorneaOD').value.trim() : '';
+      let sleKOS = document.getElementById('sleCorneaOS') ? document.getElementById('sleCorneaOS').value.trim() : '';
+      let sleACOD = document.getElementById('sleACOD') ? document.getElementById('sleACOD').value.trim() : '';
+      let sleACOS = document.getElementById('sleACOS') ? document.getElementById('sleACOS').value.trim() : '';
+      let sleIrisOD = document.getElementById('sleIrisOD') ? document.getElementById('sleIrisOD').value.trim() : '';
+      let sleIrisOS = document.getElementById('sleIrisOS') ? document.getElementById('sleIrisOS').value.trim() : '';
+      let sleLensOD = document.getElementById('sleLensOD') ? document.getElementById('sleLensOD').value.trim() : '';
+      let sleLensOS = document.getElementById('sleLensOS') ? document.getElementById('sleLensOS').value.trim() : '';
+
+      // Defaults if blank
+      sleExtOD = sleExtOD || 'normal';
+      sleExtOS = sleExtOS || 'normal';
+      sleLLOD = sleLLOD || 'normal';
+      sleLLOS = sleLLOS || 'normal';
+      sleCSOD = sleCSOD || 'white and quiet';
+      sleCSOS = sleCSOS || 'white and quiet';
+      sleKOD = sleKOD || 'clear';
+      sleKOS = sleKOS || 'clear';
+      sleACOD = sleACOD || 'well formed and without hyphema or hypopyon';
+      sleACOS = sleACOS || 'well formed and without hyphema or hypopyon';
+      sleIrisOD = sleIrisOD || 'round and reactive';
+      sleIrisOS = sleIrisOS || 'round and reactive';
+      sleLensOD = sleLensOD || 'clear';
+      sleLensOS = sleLensOS || 'clear';
+
+      lines.push(getODOSLine('Ext', sleExtOD, sleExtOS));
+      lines.push(getODOSLine('L/L', sleLLOD, sleLLOS));
+      lines.push(getODOSLine('C/S', sleCSOD, sleCSOS));
+      lines.push(getODOSLine('K', sleKOD, sleKOS));
+      lines.push(getODOSLine('A/C', sleACOD, sleACOS));
+      lines.push(getODOSLine('Iris', sleIrisOD, sleIrisOS));
+      lines.push(getODOSLine('Lens', sleLensOD, sleLensOS));
+      lines.push(''); // blank line between Anterior and DFE
+
+      // DFE (Vit, Disc, Macula, Vessels, Periphery)
+      lines.push('DFE');
+      let dfeVitOD = document.getElementById('dfeVitOD') ? document.getElementById('dfeVitOD').value.trim() : '';
+      let dfeVitOS = document.getElementById('dfeVitOS') ? document.getElementById('dfeVitOS').value.trim() : '';
+      let dfeDiscOD = document.getElementById('dfeDiscOD') ? document.getElementById('dfeDiscOD').value.trim() : '';
+      let dfeDiscOS = document.getElementById('dfeDiscOS') ? document.getElementById('dfeDiscOS').value.trim() : '';
+      let dfeMaculaOD = document.getElementById('dfeMaculaOD') ? document.getElementById('dfeMaculaOD').value.trim() : '';
+      let dfeMaculaOS = document.getElementById('dfeMaculaOS') ? document.getElementById('dfeMaculaOS').value.trim() : '';
+      let dfeVesselsOD = document.getElementById('dfeVesselsOD') ? document.getElementById('dfeVesselsOD').value.trim() : '';
+      let dfeVesselsOS = document.getElementById('dfeVesselsOS') ? document.getElementById('dfeVesselsOS').value.trim() : '';
+      let dfePeripheryOD = document.getElementById('dfePeripheryOD') ? document.getElementById('dfePeripheryOD').value.trim() : '';
+      let dfePeripheryOS = document.getElementById('dfePeripheryOS') ? document.getElementById('dfePeripheryOS').value.trim() : '';
+
+      dfeVitOD = dfeVitOD || 'clear';
+      dfeVitOS = dfeVitOS || 'clear';
+      dfeDiscOD = dfeDiscOD || 'pink, sharp margins, C/D: 0.3';
+      dfeDiscOS = dfeDiscOS || 'pink, sharp margins, C/D: 0.3';
+      dfeMaculaOD = dfeMaculaOD || 'Flat';
+      dfeMaculaOS = dfeMaculaOS || 'Flat';
+      dfeVesselsOD = dfeVesselsOD || 'Normal';
+      dfeVesselsOS = dfeVesselsOS || 'Normal';
+      dfePeripheryOD = dfePeripheryOD || 'No retinal tear, holes or breaks seen, no retinal hemorrhage or associated lesions';
+      dfePeripheryOS = dfePeripheryOS || 'No retinal tear, holes or breaks seen, no retinal hemorrhage or associated lesions';
+
+      lines.push(getODOSLine('Vit', dfeVitOD, dfeVitOS));
+      lines.push(getODOSLine('Disc', dfeDiscOD, dfeDiscOS));
+      lines.push(getODOSLine('Macula', dfeMaculaOD, dfeMaculaOS));
+      lines.push(getODOSLine('Vessels', dfeVesselsOD, dfeVesselsOS));
+      lines.push(getODOSLine('Periphery', dfePeripheryOD, dfePeripheryOS));
+      return lines.join('\n');
+    }
+
+    function updateFindingsOutput() {
+      let output = generateOutput();
+      if (document.getElementById('showFindingsSection').checked) {
+        // Always ensure two newlines before findings for a true paragraph break
+        output += '\n\n' + getFindingsFromFields();
+      }
+      document.getElementById('output').textContent = output;
+    }
+
+    function attachAllAutoUpdate() {
+      // Attach updateFindingsOutput to all input/select/textarea
+      document.querySelectorAll('input, select, textarea').forEach(el => {
+        el.addEventListener('input', updateFindingsOutput);
+        el.addEventListener('change', updateFindingsOutput);
+      });
+      // Show/hide findings section on checkbox
+      const findingsCheckbox = document.getElementById('showFindingsSection');
+      if (findingsCheckbox) {
+        findingsCheckbox.addEventListener('change', function() {
+          document.getElementById('findingsEntrySection').style.display = findingsCheckbox.checked ? '' : 'none';
+          updateFindingsOutput();
+        });
+      }
+      // Also update output after any grid interaction (EOM/CVF)
+      ['eomGridOD','eomGridOS','cvfGridOD','cvfGridOS'].forEach(id => {
+        const grid = document.getElementById(id);
+        if (grid) {
+          grid.addEventListener('click', updateFindingsOutput);
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      attachAllAutoUpdate();
+      document.getElementById('findingsEntrySection').style.display = document.getElementById('showFindingsSection').checked ? '' : 'none';
+      updateFindingsOutput();
+    });
+
+    function exportWithExamFindings() {
+      let output = generateOutput();
+      if (document.getElementById('showFindingsSection').checked) {
+        // Always ensure two newlines before findings for a true paragraph break
+        output += '\n\n' + getFindingsFromFields();
+      }
+      document.getElementById('output').textContent = output;
+      const subject = encodeURIComponent('Eye Exam Report with Findings');
+      const body = encodeURIComponent(output);
+      window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    }
+
+    // Populate findings fields and output when a sample case is picked
+    document.addEventListener('DOMContentLoaded', function() {
+      const caseSelect = document.getElementById('exampleCase');
+      const eyeSelect = document.getElementById('exampleEye');
+      function populateCaseFindings() {
+        const caseVal = caseSelect.value;
+        const eyeVal = eyeSelect.value;
+        // Clear all fields first if none
+        if (!caseVal) {
+          [
+            'sleCorneaOD','sleCorneaOS','sleACOD','sleACOS','sleIrisOD','sleIrisOS','sleLensOD','sleLensOS',
+            'dfeDiscOD','dfeDiscOS','dfeMaculaOD','dfeMaculaOS','dfeVesselsOD','dfeVesselsOS','dfePeripheryOD','dfePeripheryOS'
+          ].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+          });
+          updateFindingsOutput();
+          return;
+        }
+        // Get findings for the case
+        const caseData = caseFindings[caseVal];
+        // Map all fields to UI
+        const fieldMap = {
+          Ext: ['sleExtOD','sleExtOS'],
+          'L/L': ['sleLLOD','sleLLOS'],
+          'C/S': ['sleCSOD','sleCSOS'],
+          K: ['sleCorneaOD','sleCorneaOS'],
+          'A/C': ['sleACOD','sleACOS'],
+          Iris: ['sleIrisOD','sleIrisOS'],
+          Lens: ['sleLensOD','sleLensOS'],
+          Vit: ['dfeVitOD','dfeVitOS'],
+          Disc: ['dfeDiscOD','dfeDiscOS'],
+          Macula: ['dfeMaculaOD','dfeMaculaOS'],
+          Vessels: ['dfeVesselsOD','dfeVesselsOS'],
+          Periphery: ['dfePeripheryOD','dfePeripheryOS']
+        };
+        // Populate fields based on case data and selected eye
+        Object.keys(fieldMap).forEach(key => {
+          if (caseData && caseData[key]) {
+            const [odId, osId] = fieldMap[key];
+            if (eyeVal === 'OD') {
+              document.getElementById(odId).value = caseData[key].OD;
+              document.getElementById(osId).value = '';
+            } else if (eyeVal === 'OS') {
+              document.getElementById(odId).value = '';
+              document.getElementById(osId).value = caseData[key].OS;
+            } else if (eyeVal === 'OU') {
+              document.getElementById(odId).value = caseData[key].OD;
+              document.getElementById(osId).value = caseData[key].OS;
+            }
+          } else {
+            // If not present in case, clear
+            const [odId, osId] = fieldMap[key];
+            document.getElementById(odId).value = '';
+            document.getElementById(osId).value = '';
+          }
+        });
+        updateFindingsOutput();
+      }
+      caseSelect.addEventListener('change', populateCaseFindings);
+      eyeSelect.addEventListener('change', populateCaseFindings);
+    });
     // ...existing code...
   </script>
 </body>
+<script>
+// Citations modal logic
+document.addEventListener('DOMContentLoaded', function() {
+  const btn = document.getElementById('citationsBtn');
+  const modal = document.getElementById('citationsModal');
+  const closeBtn = document.getElementById('closeCitationsModal');
+  if (btn && modal && closeBtn) {
+    btn.addEventListener('click', function(e) {
+      modal.style.display = 'flex';
+      e.stopPropagation();
+    });
+    closeBtn.addEventListener('click', function() {
+      modal.style.display = 'none';
+    });
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) modal.style.display = 'none';
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') modal.style.display = 'none';
+    });
+  }
+});
+</script>
 </html>
