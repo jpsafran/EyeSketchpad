@@ -479,15 +479,7 @@
         if (defects.length === 0) return null;
         return `${eye}: Defect in ${defects.join(', ')}`;
       }
-      let vfLine = '';
-      if (!cvfOD.some(Boolean) && !cvfOS.some(Boolean)) {
-        vfLine = 'Full to confrontation OU';
-      } else {
-        let parts = [];
-        if (cvfOS.some(Boolean)) parts.push(cvfText(cvfOS, 'OS', ['Sup-Temp','Sup-Nasal','Inf-Temp','Inf-Nasal']));
-        if (cvfOD.some(Boolean)) parts.push(cvfText(cvfOD, 'OD', ['Sup-Nasal','Sup-Temp','Inf-Nasal','Inf-Temp']));
-        vfLine = parts.join(' | ');
-      }
+      // (removed old vfLine logic, now handled above)
 
       // EOMs
       const eomOD = getEOMGridValues('OD');
@@ -499,15 +491,7 @@
         if (abn.length === 0) return null;
         return `${eye}: ${abn.join(', ')}`;
       }
-      let eomLine = '';
-      if (eomOD.every(v=>v===0) && eomOS.every(v=>v===0)) {
-        eomLine = 'Full OU';
-      } else {
-        let parts = [];
-        if (eomOD.some(v=>v>0)) parts.push(eomGridDesc(eomOD, 'OD'));
-        if (eomOS.some(v=>v>0)) parts.push(eomGridDesc(eomOS, 'OS'));
-        eomLine = parts.join(' | ');
-      }
+      // (removed old eomLine logic, now handled above)
 
       // Format rAPD
       let rapdText = '';
@@ -517,9 +501,67 @@
       else if (rapd === 'ou') rapdText = 'rAPD OU';
 
       // Format output
+      // Pupils: say OU if same
+      let pupilsLine = '';
+      if (pupilDarkOD === pupilDarkOS && pupilLightOD === pupilLightOS) {
+        pupilsLine = `Pupils: ${pupilDarkOD}→${pupilLightOD} mm OU, ${rapdText}`;
+      } else {
+        pupilsLine = `Pupils: ${pupilDarkOD}→${pupilLightOD} mm OD, ${pupilDarkOS}→${pupilLightOS} mm OS, ${rapdText}`;
+      }
+
+      // VF: S/I/N/T and OD/OS after defect, normal for normal eye if other abnormal
+      function cvfShort(label) {
+        return label.replace(/Superior|Sup/gi, 'S')
+                    .replace(/Inferior|Inf/gi, 'I')
+                    .replace(/Temporal|Temp/gi, 'T')
+                    .replace(/Nasal/gi, 'N');
+      }
+      function cvfTextNew(quad, eye, labels) {
+        let defects = [];
+        for (let i = 0; i < 4; ++i) if (quad[i]) defects.push(cvfShort(labels[i]));
+        if (defects.length === 0) return null;
+        return `${defects.join(', ')} ${eye}`;
+      }
+      let vfLine = '';
+      if (!cvfOD.some(Boolean) && !cvfOS.some(Boolean)) {
+        vfLine = 'Full to confrontation OU';
+      } else {
+        let parts = [];
+        if (cvfOD.some(Boolean) && !cvfOS.some(Boolean)) {
+          parts.push(cvfTextNew(cvfOD, 'OD', ['Sup-Nasal','Sup-Temp','Inf-Nasal','Inf-Temp']));
+          parts.push('Full OS');
+        } else if (!cvfOD.some(Boolean) && cvfOS.some(Boolean)) {
+          parts.push('Full OD');
+          parts.push(cvfTextNew(cvfOS, 'OS', ['Sup-Temp','Sup-Nasal','Inf-Temp','Inf-Nasal']));
+        } else {
+          if (cvfOD.some(Boolean)) parts.push(cvfTextNew(cvfOD, 'OD', ['Sup-Nasal','Sup-Temp','Inf-Nasal','Inf-Temp']));
+          if (cvfOS.some(Boolean)) parts.push(cvfTextNew(cvfOS, 'OS', ['Sup-Temp','Sup-Nasal','Inf-Temp','Inf-Nasal']));
+        }
+        vfLine = parts.join(' | ');
+      }
+
+      // EOM: normal for normal eye if other abnormal
+      let eomLine = '';
+      if (eomOD.every(v=>v===0) && eomOS.every(v=>v===0)) {
+        eomLine = 'Full OU';
+      } else {
+        let parts = [];
+        if (eomOD.some(v=>v>0) && eomOS.every(v=>v===0)) {
+          parts.push(eomGridDesc(eomOD, 'OD'));
+          parts.push('Full OS');
+        } else if (eomOS.some(v=>v>0) && eomOD.every(v=>v===0)) {
+          parts.push('Full OD');
+          parts.push(eomGridDesc(eomOS, 'OS'));
+        } else {
+          if (eomOD.some(v=>v>0)) parts.push(eomGridDesc(eomOD, 'OD'));
+          if (eomOS.some(v=>v>0)) parts.push(eomGridDesc(eomOS, 'OS'));
+        }
+        eomLine = parts.join(' | ');
+      }
+
       const output =
 `VAcc: ${vaODout} OD | ${vaOSout} OS\n` +
-`Pupils: ${pupilDarkOD}→${pupilLightOD} mm OD, ${pupilDarkOS}→${pupilLightOS} mm OS, ${rapdText}\n` +
+`${pupilsLine}\n` +
 `Pressure: ${pressureOD} OD | ${pressureOS} OS by ${pressureMethod}\n` +
 `Visual Fields: ${vfLine}\n` +
 `EOM: ${eomLine}\n` +
@@ -802,6 +844,49 @@
     }
 
     function getFindingsFromFields() {
+      // Pupils: if same, output OU
+      let pupilsOD = document.getElementById('pupilsOD') ? document.getElementById('pupilsOD').value.trim() : '';
+      let pupilsOS = document.getElementById('pupilsOS') ? document.getElementById('pupilsOS').value.trim() : '';
+      if (pupilsOD || pupilsOS) {
+        lines.push(getODOSLine('Pupils', pupilsOD, pupilsOS));
+      }
+      // EOM: if one is abnormal and the other is normal, still print 'normal' for the normal eye
+      let eomOD = document.getElementById('eomOD') ? document.getElementById('eomOD').value.trim() : '';
+      let eomOS = document.getElementById('eomOS') ? document.getElementById('eomOS').value.trim() : '';
+      let normEOM = ['normal', 'Normal', 'full', 'Full'];
+      if (eomOD && !normEOM.includes(eomOD) && (!eomOS || normEOM.includes(eomOS))) eomOS = 'Normal';
+      if (eomOS && !normEOM.includes(eomOS) && (!eomOD || normEOM.includes(eomOD))) eomOD = 'Normal';
+      if (eomOD || eomOS) {
+        lines.push(getODOSLine('EOM', eomOD, eomOS));
+      }
+      // VF: if one is abnormal and the other is normal, still print 'normal' for the normal eye
+      let vfOD = document.getElementById('vfOD') ? document.getElementById('vfOD').value.trim() : '';
+      let vfOS = document.getElementById('vfOS') ? document.getElementById('vfOS').value.trim() : '';
+      // Convert sup/inf/temp/nasal to S/I/N/T and move OD/OS after defect
+      function convertVF(val) {
+        if (!val) return '';
+        let v = val.replace(/superior|sup/gi, 'S')
+                  .replace(/inferior|inf/gi, 'I')
+                  .replace(/temporal|temp/gi, 'T')
+                  .replace(/nasal/gi, 'N');
+        // If starts with OD/OS, move to end
+        v = v.replace(/^(OD|OS)[:\s-]*/i, '');
+        return v;
+      }
+      let normVF = ['normal', 'Normal', 'full', 'Full'];
+      if (vfOD && !normVF.includes(vfOD) && (!vfOS || normVF.includes(vfOS))) vfOS = 'Normal';
+      if (vfOS && !normVF.includes(vfOS) && (!vfOD || normVF.includes(vfOD))) vfOD = 'Normal';
+      if (vfOD || vfOS) {
+        let vfLine = '';
+        if (vfOD && vfOS && vfOD === vfOS) {
+          vfLine = `VF: ${convertVF(vfOD)} OU`;
+        } else {
+          if (vfOD) vfLine += `VF: ${convertVF(vfOD)} OD`;
+          if (vfOD && vfOS) vfLine += ', ';
+          if (vfOS) vfLine += `${convertVF(vfOS)} OS`;
+        }
+        lines.push(vfLine);
+      }
       let lines = [];
       // Anterior Segment (Ext, L/L, C/S, K, A/C, Iris, Lens)
       lines.push('Anterior Exam');
