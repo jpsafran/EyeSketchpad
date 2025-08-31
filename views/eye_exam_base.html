@@ -42,15 +42,15 @@
           <li><a href="https://eyerounds.org/" target="_blank" rel="noopener" style="color:#008080; text-decoration:underline;">EyeRounds</a></li>
         </ul>
         <div style="margin-top:1.1em; color:#a00; font-size:0.98em; text-align:left; width:100%;">
-          <strong>Disclaimer:</strong> All cases and information are for educational purposes only. This tool is not a substitute for professional clinical judgment, diagnosis, or treatment. Always consult appropriate resources and use your own clinical expertise.
+          <strong>Disclaimer:</strong> All cases and information are for educational purposes only. This tool is not a substitute for professional clinical judgment, diagnosis, or treatment. <b>Do not enter patient names, MRNs, dates of birth, or any PHI.</b> Always consult appropriate resources and use your own clinical expertise.
         </div>
       </div>
     </div>
     <h1>Eye Exam Sketchpad</h1>
     <div style="margin-bottom:1em; color:#888; font-size:0.98em; text-align:center;">
-      <strong>Disclaimer:</strong> This tool is for educational and training purposes only. It is not intended for patient documentation or clinical use.
+  <strong>Disclaimer:</strong> This tool is for educational and training purposes only. It is not intended for patient documentation or clinical use. <b>Do not enter patient names, MRNs, dates of birth, or any PHI.</b>
     </div>
-    <form id="examForm" autocomplete="off">
+  <form id="examForm" autocomplete="off">
       <!-- ...existing code... -->
   <style>
     .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
@@ -280,6 +280,93 @@
     <div class="output" id="output"></div>
   </div>
   <script>
+    // --- Session Storage Persistence ---
+    const FORM_STORAGE_KEY = 'eyeExamFormData';
+    // Serialize all form data
+    function getFormData() {
+      const data = {};
+      // Standard fields
+      document.querySelectorAll('#examForm input, #examForm select, #examForm textarea').forEach(el => {
+        if (el.type === 'checkbox' || el.type === 'radio') {
+          data[el.id] = el.checked;
+        } else {
+          data[el.id] = el.value;
+        }
+      });
+      // EOM/CVF grid states
+      ['OD','OS'].forEach(eye => {
+        // EOM
+        const eomGrid = document.getElementById('eomGrid'+eye);
+        if (eomGrid) {
+          data['eomGrid'+eye+'_levels'] = Array.from(eomGrid.children).map(cell => cell.dataset.level);
+        }
+        // CVF
+        const cvfGrid = document.getElementById('cvfGrid'+eye);
+        if (cvfGrid) {
+          data['cvfGrid'+eye+'_defects'] = Array.from(cvfGrid.children).map(cell => cell.dataset.defect);
+        }
+      });
+      return data;
+    }
+    // Restore form data
+    function setFormData(data) {
+      if (!data) return;
+      // Standard fields
+      Object.entries(data).forEach(([id, val]) => {
+        const el = document.getElementById(id);
+        if (el && !id.startsWith('eomGrid') && !id.startsWith('cvfGrid')) {
+          if (el.type === 'checkbox' || el.type === 'radio') {
+            el.checked = !!val;
+          } else {
+            el.value = val;
+          }
+        }
+      });
+      // Restore EOM/CVF grid states after grids are built
+      ['OD','OS'].forEach(eye => {
+        // EOM
+        const eomGrid = document.getElementById('eomGrid'+eye);
+        const levels = data['eomGrid'+eye+'_levels'];
+        if (eomGrid && Array.isArray(levels) && eomGrid.children.length === levels.length) {
+          for (let i=0; i<levels.length; ++i) {
+            eomGrid.children[i].dataset.level = levels[i];
+            // Update color and title
+            const lvl = parseInt(levels[i]);
+            const greens = ['#f8f8f8', '#b2f7e2', '#7beed6', '#1de9b6', '#009e7a'];
+            const terms = getEOMTerms(eye);
+            eomGrid.children[i].title = terms[i] + ' - ' + EOM_LEVELS[lvl];
+            eomGrid.children[i].style.background = greens[lvl];
+          }
+        }
+        // CVF
+        const cvfGrid = document.getElementById('cvfGrid'+eye);
+        const defects = data['cvfGrid'+eye+'_defects'];
+        if (cvfGrid && Array.isArray(defects) && cvfGrid.children.length === defects.length) {
+          for (let i=0; i<defects.length; ++i) {
+            cvfGrid.children[i].dataset.defect = defects[i];
+            cvfGrid.children[i].style.background = defects[i]==='1' ? '#1de9b6' : '#f8f8f8';
+          }
+        }
+      });
+    }
+    // Save to sessionStorage on every change
+    function autoSaveSession() {
+      const data = getFormData();
+      sessionStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(data));
+    }
+    // Restore from sessionStorage on load
+    function restoreSession() {
+      const raw = sessionStorage.getItem(FORM_STORAGE_KEY);
+      if (raw) {
+        try { setFormData(JSON.parse(raw)); } catch {}
+      }
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      restoreSession();
+      document.querySelectorAll('#examForm input, #examForm select, #examForm textarea').forEach(el => {
+        el.addEventListener('input', autoSaveSession);
+      });
+    });
     // EOM and CVF grid logic
     const EOM_LEVELS = ['Full', '-1', '-2', '-3', '-4'];
     // EOM grid: dot in center, arrows in true anatomical order (center dot, up above, up-right top right, right middle right, down-right bottom right, down below, down-left bottom left, left middle left, up-left top left)
@@ -361,6 +448,7 @@
               cell.dataset.defect = cell.dataset.defect === '0' ? '1' : '0';
               cell.style.background = cell.dataset.defect === '1' ? green : '#f8f8f8';
               generateOutput();
+              autoSaveSession();
             };
             grid.appendChild(cell);
           }
@@ -385,6 +473,7 @@
               cell.dataset.defect = cell.dataset.defect === '0' ? '1' : '0';
               cell.style.background = cell.dataset.defect === '1' ? green : '#f8f8f8';
               generateOutput();
+              autoSaveSession();
             };
             grid.appendChild(cell);
           }
@@ -421,6 +510,7 @@
           cell.title = terms[i] + ' - ' + EOM_LEVELS[lvl];
           cell.style.background = greens[lvl];
           generateOutput();
+          autoSaveSession();
         };
         grid.appendChild(cell);
       }
@@ -576,40 +666,10 @@
       makeCVFGrid('OD');
       makeCVFGrid('OS');
     }
-    function attachAutoUpdate() {
-      document.querySelectorAll('input, select').forEach(el => {
-        el.addEventListener('input', generateOutput);
-        el.addEventListener('change', generateOutput);
-      });
-    }
-    function attachAllAutoUpdate() {
-      // Attach updateFindingsOutput to all input/select/textarea
-      document.querySelectorAll('input, select, textarea').forEach(el => {
-        el.addEventListener('input', updateFindingsOutput);
-        el.addEventListener('change', updateFindingsOutput);
-      });
-      // Show/hide findings section on checkbox
-      const findingsCheckbox = document.getElementById('showFindingsSection');
-      if (findingsCheckbox) {
-        findingsCheckbox.addEventListener('change', function() {
-          document.getElementById('findingsEntrySection').style.display = findingsCheckbox.checked ? '' : 'none';
-          updateFindingsOutput();
-        });
-      }
-      // Also update output after any grid interaction (EOM/CVF)
-      ['eomGridOD','eomGridOS','cvfGridOD','cvfGridOS'].forEach(id => {
-        const grid = document.getElementById(id);
-        if (grid) {
-          grid.addEventListener('click', updateFindingsOutput);
-        }
-      });
-    }
+  // (removed: replaced by attachUIHandlers/attachAutoSaveHandlers below)
+  // (removed: replaced by attachUIHandlers/attachAutoSaveHandlers below)
 
-    window.onload = function() {
-      initializeGrids();
-      attachAllAutoUpdate();
-      updateFindingsOutput();
-    };
+  // (removed: replaced by unified DOMContentLoaded block at end)
     // Removed emailReport function and mailto logic to prevent URL encoding issues
 
     // Exam findings logic
@@ -844,7 +904,8 @@
     }
 
     function getFindingsFromFields() {
-      // Pupils: if same, output OU
+  let lines = [];
+  // Pupils: if same, output OU
       let pupilsOD = document.getElementById('pupilsOD') ? document.getElementById('pupilsOD').value.trim() : '';
       let pupilsOS = document.getElementById('pupilsOS') ? document.getElementById('pupilsOS').value.trim() : '';
       if (pupilsOD || pupilsOS) {
@@ -887,7 +948,7 @@
         }
         lines.push(vfLine);
       }
-      let lines = [];
+  // ...rest of function unchanged...
       // Anterior Segment (Ext, L/L, C/S, K, A/C, Iris, Lens)
       lines.push('Anterior Exam');
       let sleExtOD = document.getElementById('sleExtOD') ? document.getElementById('sleExtOD').value.trim() : '';
@@ -971,33 +1032,64 @@
       document.getElementById('output').textContent = output;
     }
 
-    function attachAllAutoUpdate() {
-      // Attach updateFindingsOutput to all input/select/textarea
+
+    // --- Unified UI and autosave handlers ---
+    function attachUIHandlers() {
+      // Update output whenever anything changes
       document.querySelectorAll('input, select, textarea').forEach(el => {
         el.addEventListener('input', updateFindingsOutput);
         el.addEventListener('change', updateFindingsOutput);
       });
-      // Show/hide findings section on checkbox
+
       const findingsCheckbox = document.getElementById('showFindingsSection');
       if (findingsCheckbox) {
-        findingsCheckbox.addEventListener('change', function() {
-          document.getElementById('findingsEntrySection').style.display = findingsCheckbox.checked ? '' : 'none';
+        findingsCheckbox.addEventListener('change', function () {
+          document.getElementById('findingsEntrySection').style.display =
+            findingsCheckbox.checked ? '' : 'none';
           updateFindingsOutput();
         });
       }
-      // Also update output after any grid interaction (EOM/CVF)
+
+      // Also update after grid clicks
       ['eomGridOD','eomGridOS','cvfGridOD','cvfGridOS'].forEach(id => {
         const grid = document.getElementById(id);
-        if (grid) {
-          grid.addEventListener('click', updateFindingsOutput);
-        }
+        if (grid) grid.addEventListener('click', updateFindingsOutput);
       });
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-      attachAllAutoUpdate();
-      document.getElementById('findingsEntrySection').style.display = document.getElementById('showFindingsSection').checked ? '' : 'none';
+    function attachAutoSaveHandlers() {
+      // Save when any text/select changes
+      document.querySelectorAll('#examForm input, #examForm select, #examForm textarea').forEach(el => {
+        el.addEventListener('input', autoSaveSession);
+        el.addEventListener('change', autoSaveSession);
+      });
+      // Save when grids are clicked
+      ['eomGridOD','eomGridOS','cvfGridOD','cvfGridOS'].forEach(id => {
+        const grid = document.getElementById(id);
+        if (grid) grid.addEventListener('click', autoSaveSession);
+      });
+    }
+
+    // --- Main DOMContentLoaded block ---
+    document.addEventListener('DOMContentLoaded', function () {
+      // 1) Build grids first so they have children
+      initializeGrids();
+
+      // 2) Restore persisted values (now grids exist, so cells can be restored)
+      restoreSession();
+
+      // 3) Hook up UI -> output updates
+      attachUIHandlers();
+
+      // 4) Hook up saving for all inputs AND grids
+      attachAutoSaveHandlers();
+
+      // 5) Initial render
       updateFindingsOutput();
+
+      // Keep the findings panel visibility in sync on first load
+      document.getElementById('findingsEntrySection').style.display =
+        document.getElementById('showFindingsSection').checked ? '' : 'none';
     });
 
 
