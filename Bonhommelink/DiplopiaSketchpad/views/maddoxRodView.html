@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maddox Rod Test</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/maddoxRod.css">
+</head>
+<body>
+    <div class="container">
+        <header class="view-header">
+            <a href="../index.html" class="back-button">&larr; Home</a>
+            <h2><img src="../images/DiplopiaLogo.png" alt="Diplopia Logo" class="header-icon-img"> Guided Maddox Rod Test</h2>
+            <button id="resetTestButton" class="header-button">Reset</button>
+        </header>
+
+        <div id="setupSection" class="maddox-section">
+            <h3>Setup</h3>
+            <label for="eyeWithRodPicker">Maddox Rod Over:</label>
+            <select id="eyeWithRodPicker">
+                <option value="Right">Right Eye</option>
+                <option value="Left">Left Eye</option>
+            </select>
+            <button id="startTestingButton" class="action-button">Start Testing</button>
+            <a href="manualMaddoxGridInputView.html" class="skip-button">Skip Tutorial (Manual Grid)</a>
+        </div>
+
+        <div id="testingSection" class="maddox-section" style="display: none;">
+            <h3 id="testingHeader">Testing: Horizontal - Primary</h3>
+            <div id="instructionsBox">
+                <h4>Instructions & Question</h4>
+                <p id="currentInstructionsText">Loading instructions...</p>
+            </div>
+            <div id="maddoxGraphicContainer">
+                <!-- JS will render graphic here (e.g., using SVG or Canvas) -->
+                <div class="graphic-placeholder">
+                    <div class="lr-labels"><span>R</span><span>L</span></div>
+                    <div id="graphicLine" class="graphic-line-vertical"></div>
+                    <div id="graphicDot" class="graphic-dot-centered">?</div>
+                    <div id="graphicLineLabel" class="graphic-label">Red Line</div>
+                     <!-- For Double Maddox -->
+                    <div id="fellowEyeLine" class="graphic-line-horizontal" style="display:none;"></div>
+                    <div id="fellowEyeLineLabel" class="graphic-label" style="display:none;">(Fellow Eye)</div>
+                    <div id="rodEyeLine" class="graphic-line-horizontal" style="display:none;"></div>
+                    <div id="rodEyeLineLabel" class="graphic-label" style="display:none;">(Rod Eye)</div>
+                </div>
+            </div>
+            
+            <div id="qualitativeInputSection">
+                <!-- Buttons will be dynamically added by JS -->
+            </div>
+
+            <div id="quantitativeInputSection" style="display: none;">
+                <label for="quantitativeValueInput" id="quantitativePrompt">Enter Prism Diopters (Δ):</label>
+                <input type="number" id="quantitativeValueInput" min="0" step="1">
+                <span id="quantitativeDirectionDisplay"></span>
+                <!-- For Double Maddox Interactive UI -->
+                <div id="doubleMaddoxInteractiveUI" style="display:none;">
+                    <h4>Double Maddox Rod Adjustment</h4>
+                    <div class="trial-frame-container">
+                        <div class="trial-lens" id="rightTrialLens">
+                            <div class="lens-line" id="rightLensLine"></div>
+                            <div class="lens-label">Right Eye <span id="rightRodLabel"></span></div>
+                            <div class="lens-angle" id="rightLensAngle">90°</div>
+                        </div>
+                        <div class="trial-lens" id="leftTrialLens">
+                            <div class="lens-line" id="leftLensLine"></div>
+                            <div class="lens-label">Left Eye <span id="leftRodLabel"></span></div>
+                            <div class="lens-angle" id="leftLensAngle">90°</div>
+                        </div>
+                    </div>
+                    <div id="torsionResultDisplay">No Significant Torsion</div>
+                    <button id="resetTiltButton">Reset to Vertical</button>
+                </div>
+            </div>
+            
+            <div id="graphicResultDisplay" style="display:none;">
+                <p>Showing result graphic...</p> <!-- Or actual graphic -->
+            </div>
+
+            <div class="navigation-buttons">
+                <button id="backButton" class="secondary-button">Back</button>
+                <button id="confirmNextButton" class="action-button">Confirm & Next</button>
+            </div>
+        </div>
+
+        <div id="resultsSection" class="maddox-section" style="display: none;">
+            <h3>Results & Interpretation</h3>
+            <button id="backToLastStepButton" class="secondary-button">Back to Last Step</button>
+            <h4>Measurement Summary Grid</h4>
+            <div id="resultsGridContainer">
+                <!-- JS will populate this grid -->
+            </div>
+            <h4>Vertical Deviation on Head Tilt</h4>
+            <div id="headTiltResultsContainer">
+                 <!-- JS will populate this -->
+            </div>
+            <button id="analyzeButton" class="action-button">Analyze Measurements & Show Suggestions</button>
+            <div id="diagnosticSuggestionsContainer" style="display:none;">
+                <h4>Pattern-Based Diagnostic Suggestions</h4>
+                <!-- JS will populate suggestions -->
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/dataModels.js"></script>
+    <script src="../js/maddoxAnalyzer.js"></script>
+    <script src="../js/maddoxRod.js"></script>
+</body>
+</html>
