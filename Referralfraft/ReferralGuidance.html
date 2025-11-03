@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ophthalmology Referral Guidance</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 40px; 
+            background: #f7f7fa; 
+            font-size: 18px; 
+            line-height: 1.4;
+        }
+        h1 { 
+            color: #2a3a4a; 
+            font-size: 28px; 
+            margin-bottom: 16px; 
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+        #guides-bubble {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 30px;
+            height: 30px;
+            background: #2a3a4a;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .question-container {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px #0001;
+            padding: 24px;
+            margin-top: 24px;
+            display: none;
+        }
+        .question-container.active {
+            display: block;
+        }
+        .result-container {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px #0001;
+            padding: 24px;
+            margin-top: 24px;
+            display: none;
+        }
+        .urgent {
+            background: #ffebee;
+            border-left: 4px solid #c62828;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        .semi-urgent {
+            background: #fff3e0;
+            border-left: 4px solid #ef6c00;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        .non-urgent {
+            background: #e8f5e9;
+            border-left: 4px solid #2e7d32;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        button {
+            padding: 10px 24px;
+            font-size: 18px;
+            background: #2a3a4a;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 8px;
+        }
+        button:hover {
+            background: #1a2530;
+        }
+        .reset-button {
+            background: #64748b;
+        }
+        .evidence {
+            font-size: 14px;
+            color: #64748b;
+            margin-top: 8px;
+            font-style: italic;
+        }
+        .warning {
+            background: #fff3e0;
+            border-left: 4px solid #ef6c00;
+            padding: 16px;
+            margin: 16px 0;
+            font-weight: bold;
+        }
+        .guide {
+            margin-bottom: 16px;
+        }
+        .guide h4 {
+            color: #1565c0;
+            margin: 0 0 8px 0;
+        }
+        .guide ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .guide li {
+            margin: 4px 0;
+            line-height: 1.4;
+        }
+        .urgency-guide {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            margin: 24px 0;
+            flex-wrap: wrap;
+        }
+        .urgency-box {
+            flex: 1;
+            padding: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .urgency-box:hover {
+            transform: translateY(-2px);
+        }
+        .urgency-box h3 {
+            margin: 0 0 8px 0;
+            font-size: 20px;
+        }
+        .urgency-box p {
+            margin: 0;
+            font-size: 16px;
+        }
+        .urgency-box.emergent {
+            background: #ffebee;
+            border-left: 4px solid #c62828;
+        }
+        .urgency-box.urgent {
+            background: #fff3e0;
+            border-left: 4px solid #ef6c00;
+        }
+        .urgency-box.routine {
+            background: #e8f5e9;
+            border-left: 4px solid #2e7d32;
+        }
+        .main-menu {
+            margin-top: 24px;
+        }
+        .symptom-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+        .symptom-box {
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            font-weight: 500;
+        }
+        .symptom-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background: #f8f9fa;
+        }
+        .back-button {
+            background: #64748b;
+            margin-top: 16px;
+        }
+        .info-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Ophthalmology Referral Guidance</h1>
+        <div id="guides-bubble" onclick="showAllGuides()" title="Show Examination Guides">i</div>
+        
+        <div class="warning">
+            This tool is for guidance only. When in doubt, err on the side of caution and contact the on-call ophthalmologist.
+            This is not a substitute for clinical judgment.
+        </div>
+
+        <div id="urgencyGuide" class="urgency-guide">
+            <div class="urgency-box emergent" onclick="showUrgencyInfo('emergent')">
+                <h3>🔴 Emergency</h3>
+                <p>Immediate ophthalmology contact needed</p>
+            </div>
+            <div class="urgency-box urgent" onclick="showUrgencyInfo('urgent')">
+                <h3>🟠 Urgent</h3>
+                <p>Evaluation within 24 hours</p>
+            </div>
+            <div class="urgency-box routine" onclick="showUrgencyInfo('routine')">
+                <h3>🟢 Routine</h3>
+                <p>Schedule through normal channels</p>
+            </div>
+        </div>
+
+        <div id="mainMenu" class="main-menu">
+            <h3>Select Primary Symptom:</h3>
+            <div class="symptom-grid">
+                <div class="symptom-box" onclick="showQuestion('acuteVisionLoss')">Acute Vision Loss</div>
+                <div class="symptom-box" onclick="showQuestion('eyePain')">Eye Pain</div>
+                <div class="symptom-box" onclick="showQuestion('trauma')">Eye Trauma</div>
+                <div class="symptom-box" onclick="showQuestion('chemical')">Chemical Exposure</div>
+                <div class="symptom-box" onclick="showQuestion('orbital')">Proptosis/Orbital</div>
+                <div class="symptom-box" onclick="showQuestion('redEye')">Red Eye</div>
+                <div class="symptom-box" onclick="showQuestion('diplopia')">Double Vision</div>
+                <div class="symptom-box" onclick="showQuestion('flashesFloaters')">Flashes/Floaters</div>
+            </div>
+        </div>
+
+        <div id="questions" style="display: none;"></div>
+        <div id="result" class="result-container"></div>
+    </div>
+
+    <script>
+    const preReferralSteps = {
+        chemical: {
+            title: 'Chemical Injury Pre-Referral Steps',
+            required: true,
+            steps: [
+                'Immediate irrigation with sterile saline or water for minimum 30 minutes',
+                'Document pH if possible',
+                'Record type of chemical if known',
+                'DO NOT DELAY IRRIGATION FOR TESTING'
+            ]
+        },
+        canthotomy: {
+            title: 'Pre-Canthotomy Assessment',
+            required: true,
+            steps: [
+                'Check and record vision in both eyes',
+                'Document time of onset of symptoms',
+                'Check for APD (critical finding)',
+                'Measure or estimate proptosis',
+                'Photo documentation if possible'
+            ]
+        },
+        acuteAngleClosure: {
+            title: 'Suspected Angle Closure',
+            required: true,
+            steps: [
+                'Check vision and document',
+                'Check other eye IOP and symptoms',
+                'Document time of onset',
+                'Document any medications',
+                'Start timolol if available'
+            ]
+        }
+    };
+
+    const examinationGuides = {
+        pressure: {
+            title: 'How to Check Pressure by Palpation',
+            steps: [
+                'Have patient look down.',
+                'Gently place both index fingers on the upper eyelid over the globe.',
+                'Alternate pressure between fingers to estimate globe firmness.',
+                'Compare to your own eye if unsure.',
+                'A "rock hard" eye is an emergency.'
+            ]
+        },
+        visualAcuity: {
+            title: 'How to Test Visual Acuity',
+            steps: [
+                'Use a Snellen chart at 20 feet if available.',
+                'If not, use a near card or any printed material.',
+                'Test each eye separately, with and without glasses.',
+                'If patient cannot read letters, check for counting fingers, hand motion, or light perception.',
+                'Document the best-corrected vision for each eye (e.g., 20/40, CF 5ft, HM, LP).'
+            ]
+        },
+        pupilExam: {
+            title: 'How to Perform a Pupil Exam',
+            steps: [
+                'Dim the room lights.',
+                'Observe pupil size and shape in both eyes.',
+                'Shine a light in one eye and observe for direct constriction.',
+                'Shine the light again and observe the other eye for consensual constriction.',
+                'Perform the swinging flashlight test to check for a Relative Afferent Pupillary Defect (APD).'
+            ]
+        }
+    };
+
+    const questions = [
+        {
+            id: 'acuteVisionLoss',
+            text: 'Is any of the following present?',
+            options: [
+                { text: 'Complete vision loss', result: 'emergentVisionLoss' },
+                { text: 'Curtain or shade coming across vision', result: 'emergentRetinal' },
+                { text: 'Multiple new flashes and floaters', result: 'urgentRetinal' },
+                { text: 'Central gray/black spot', result: 'urgentMacular' },
+                { text: 'None of the above', next: 'daysVision' }
+            ]
+        },
+        {
+            id: 'daysVision',
+            text: 'When did the vision changes start?',
+            options: [
+                { text: 'Last 24-48 hours', result: 'urgent' },
+                { text: 'Several days ago', result: 'urgent' },
+                { text: 'Gradual over weeks', result: 'routine' }
+            ]
+        },
+        {
+            id: 'eyePain',
+            text: 'Which best describes the pain?',
+            options: [
+                { text: 'Severe pain with nausea/vomiting', next: 'angleClosure' },
+                { text: 'Moderate to severe pain with light sensitivity', next: 'painWithPhotophobia' },
+                { text: 'Foreign body sensation', next: 'foreignBody' },
+                { text: 'Mild discomfort only', next: 'mildPain' }
+            ]
+        },
+        {
+            id: 'foreignBody',
+            text: 'Is there a history of high-velocity injury (e.g., grinding, hammering)?',
+            options: [
+                { text: 'Yes, high-velocity injury suspected', result: 'emergentTrauma' },
+                { text: 'No, simple foreign body (e.g., dust, eyelash)', result: 'urgent' },
+                { text: 'Unsure', result: 'urgent' }
+            ]
+        },
+        {
+            id: 'mildPain',
+            text: 'Are there any other symptoms?',
+            options: [
+                { text: 'Redness and discharge', next: 'mildRedEye' },
+                { text: 'Itching and watering', result: 'routine' },
+                { text: 'Pain with eye movement', result: 'urgent' },
+                { text: 'No other symptoms', result: 'routine' }
+            ]
+        },
+        {
+            id: 'angleClosure',
+            text: 'Are any of these present?',
+            options: [
+                { text: 'Mid-dilated pupil and reduced vision', result: 'emergentAngleClosure' },
+                { text: 'Hard eye on palpation', result: 'emergentAngleClosure' },
+                { text: 'History of angle closure in other eye', result: 'emergentAngleClosure' },
+                { text: 'None of the above', next: 'painWithPhotophobia' }
+            ],
+            preReferral: 'acuteAngleClosure'
+        },
+        {
+            id: 'painWithPhotophobia',
+            text: 'Are any of these present?',
+            options: [
+                { text: 'High pressure on palpation', result: 'emergent' },
+                { text: 'Contact lens wearer', result: 'urgent' },
+                { text: 'Recent eye surgery/procedure', result: 'urgent' },
+                { text: 'Vision loss', result: 'emergent' },
+                { text: 'None of the above', next: 'mildPain' }
+            ]
+        },
+        {
+            id: 'orbital',
+            text: 'Select all that apply:',
+            options: [
+                { text: 'Acute onset proptosis with vision loss', next: 'canthotomy' },
+                { text: 'Recent sinus infection or facial cellulitis', result: 'emergentOrbital' },
+                { text: 'Proptosis with eye movement limitation', result: 'urgentOrbital' },
+                { text: 'Gradual onset over weeks', result: 'routine' }
+            ]
+        },
+        {
+            id: 'canthotomy',
+            text: 'Are any of these present?',
+            options: [
+                { text: 'Vision loss with tense orbit', result: 'emergentCanthotomy' },
+                { text: 'APD present', result: 'emergentCanthotomy' },
+                { text: 'Post-trauma or surgery', result: 'emergentCanthotomy' }
+            ],
+            preReferral: 'canthotomy'
+        },
+        {
+            id: 'chemical',
+            text: 'Type of chemical exposure:',
+            options: [
+                { text: 'Acid or Alkali', result: 'emergentChemical' },
+                { text: 'Unknown chemical', result: 'emergentChemical' },
+                { text: 'Mild irritant (soap/shampoo)', next: 'mildChemical' }
+            ],
+            preReferral: 'chemical'
+        },
+        {
+            id: 'mildChemical',
+            text: 'After irrigation, are any present?',
+            options: [
+                { text: 'Persistent pain or redness', result: 'urgent' },
+                { text: 'Vision changes', result: 'urgent' },
+                { text: 'Complete resolution of symptoms', result: 'routine' }
+            ]
+        },
+        {
+            id: 'trauma',
+            text: 'What type of trauma occurred?',
+            options: [
+                { text: 'Open globe injury/penetrating trauma', result: 'emergentTrauma' },
+                { text: 'Blunt trauma with vision loss', result: 'emergentTrauma' },
+                { text: 'Orbital fracture with muscle entrapment', result: 'emergentTrauma' },
+                { text: 'Minor trauma without vision loss', next: 'minorTrauma' }
+            ]
+        },
+        {
+            id: 'minorTrauma',
+            text: 'Select any that apply:',
+            options: [
+                { text: 'Large or deep corneal abrasion', result: 'urgent' },
+                { text: 'Multiple small foreign bodies', result: 'urgent' },
+                { text: 'Significant subconjunctival hemorrhage', result: 'urgent' },
+                { text: 'Small abrasion, no other findings', result: 'routine' }
+            ]
+        },
+        {
+            id: 'redEye',
+            text: 'Are any of these present?',
+            options: [
+                { text: 'Severe pain or vision loss', result: 'emergent' },
+                { text: 'Contact lens wearer with pain', result: 'urgent' },
+                { text: 'Recent eye surgery', result: 'urgent' },
+                { text: 'Chemical exposure', result: 'emergent' },
+                { text: 'Mild symptoms only', next: 'mildRedEye' }
+            ]
+        },
+        {
+            id: 'mildRedEye',
+            text: 'Select any that apply:',
+            options: [
+                { text: 'Discharge with stuck eyelids', result: 'urgent' },
+                { text: 'Reduced vision', result: 'urgent' },
+                { text: 'One eye only with severe redness', next: 'unilateralRed' },
+                { text: 'Both eyes with mild redness', result: 'routine' }
+            ]
+        },
+        {
+            id: 'unilateralRed',
+            text: 'Additional symptoms?',
+            options: [
+                { text: 'Light sensitivity and headache', result: 'urgent' },
+                { text: 'Firm eye on palpation', result: 'emergent' },
+                { text: 'Normal pressure, no pain', result: 'routine' }
+            ]
+        },
+        {
+            id: 'gradualVision',
+            text: 'How long have the vision changes been present?',
+            options: [
+                { text: 'Days', next: 'daysVision' },
+                { text: 'Weeks', result: 'routine' },
+                { text: 'Months', result: 'routine' }
+            ]
+        },
+        {
+            id: 'diplopia',
+            text: 'Does the double vision go away when one eye is covered?',
+            options: [
+                { text: 'Yes, it goes away (Binocular Diplopia)', result: 'urgent' },
+                { text: 'No, it persists in one eye (Monocular Diplopia)', result: 'routine' },
+                { text: 'Unsure', result: 'urgent' }
+            ]
+        },
+        {
+            id: 'flashesFloaters',
+            text: 'Which of the following best describes the symptoms?',
+            options: [
+                { text: 'Sudden shower of many new floaters or flashes', result: 'urgentRetinal' },
+                { text: 'A curtain or veil blocking part of the vision', result: 'emergentRetinal' },
+                { text: 'A few, stable floaters that have been present for a while', result: 'routine' },
+                { text: 'Flashes without floaters', result: 'urgent' }
+            ]
+        }
+    ];
+
+    const results = {
+        emergentVisionLoss: {
+            class: 'urgent',
+            title: 'EMERGENCY - Acute Vision Loss',
+            text: 'Complete vision loss requires immediate evaluation.',
+            instructions: [
+                'Document exact time of vision loss',
+                'Check both eyes\' vision and pupils',
+                'Test for APD',
+                'Keep patient NPO',
+                'Check blood pressure if possible'
+            ]
+        },
+        emergentRetinal: {
+            class: 'urgent',
+            title: 'EMERGENCY - Suspected Retinal Detachment',
+            text: 'Symptoms suggest possible retinal detachment requiring immediate evaluation.',
+            instructions: [
+                'Document vision and time of onset',
+                'Keep patient at rest (no heavy activity)',
+                'Position head up if macula involved',
+                'Prepare for possible emergency surgery'
+            ]
+        },
+        urgentRetinal: {
+            class: 'semi-urgent',
+            title: 'URGENT - Retinal Warning Signs',
+            text: 'New onset flashes and floaters require prompt evaluation.',
+            instructions: [
+                'Document symptoms and onset',
+                'Check vision in both eyes',
+                'Ask about prior history of flashes/floaters',
+                'Arrange evaluation within 24 hours'
+            ]
+        },
+        urgentMacular: {
+            class: 'semi-urgent',
+            title: 'URGENT - Central Vision Defect',
+            text: 'Central vision changes require prompt evaluation.',
+            instructions: [
+                'Document exact location of vision defect',
+                'Test vision with Amsler grid if available',
+                'Check both eyes',
+                'Arrange evaluation within 24 hours'
+            ]
+        },
+        emergentCanthotomy: {
+            class: 'urgent',
+            title: 'EMERGENCY - Orbital Compartment Syndrome',
+            text: 'This is a vision-threatening emergency that may require immediate lateral canthotomy/cantholysis.',
+            instructions: [
+                'Call ophthalmology immediately',
+                'Do not delay for imaging if vision threatened',
+                'Mark orbital tension and proptosis level',
+                'Prepare canthotomy kit if available',
+                'Document vision and APD carefully'
+            ]
+        },
+        emergentChemical: {
+            class: 'urgent',
+            title: 'EMERGENCY - Chemical Injury',
+            text: 'Begin copious irrigation immediately. Call ophthalmology while irrigation continues.',
+            instructions: [
+                'Continue irrigation for minimum 30 minutes',
+                'Use Morgan lens if available',
+                'Check pH after irrigation if possible',
+                'Document type of chemical if known'
+            ]
+        },
+        emergentAngleClosure: {
+            class: 'urgent',
+            title: 'EMERGENCY - Suspected Angle Closure',
+            text: 'This is a vision-threatening emergency requiring immediate pressure lowering.',
+            instructions: [
+                'Call ophthalmology immediately',
+                'Start pressure-lowering drops if available',
+                'Keep patient upright',
+                'Check other eye for prophylaxis need'
+            ]
+        },
+        emergentTrauma: {
+            class: 'urgent',
+            title: 'EMERGENCY - Severe Eye Trauma',
+            text: 'This requires immediate ophthalmologic evaluation.',
+            instructions: [
+                'Protect eye with shield only - no pressure',
+                'NPO immediately',
+                'No topical medications',
+                'CT scan if penetrating trauma suspected'
+            ]
+        },
+        emergentOrbital: {
+            class: 'urgent',
+            title: 'EMERGENCY - Orbital Cellulitis',
+            text: 'This requires immediate evaluation and likely admission.',
+            instructions: [
+                'Call ophthalmology immediately',
+                'Check vision and pupil reaction',
+                'Start IV antibiotics if available',
+                'Prepare for CT imaging'
+            ]
+        },
+        emergent: {
+            class: 'urgent',
+            title: 'Emergency - Contact On-Call Immediately',
+            text: 'This presentation requires immediate ophthalmologic evaluation.',
+            instructions: [
+                'Document time of symptom onset',
+                'Check and document visual acuity',
+                'Have patient NPO if surgery possible',
+                'Prepare for immediate transfer if needed'
+            ]
+        },
+        urgent: {
+            class: 'semi-urgent',
+            title: 'Urgent - Contact On-Call',
+            text: 'This condition warrants urgent ophthalmologic consultation within 24 hours.',
+            instructions: [
+                'Document visual acuity',
+                'Document symptoms and onset timing',
+                'Call on-call ophthalmologist to discuss case',
+                'Follow specific instructions for patient disposition'
+            ]
+        },
+        routine: {
+            class: 'non-urgent',
+            title: 'Non-Urgent',
+            text: 'This can be handled through routine referral channels.',
+            instructions: [
+                'Document symptoms',
+                'Provide patient with clinic contact information',
+                'Instruct on warning signs that would require urgent evaluation',
+                'Arrange follow-up through regular channels'
+            ]
+        }
+    };
+
+    let currentQuestion = null;
+
+    function startAssessment() {
+        document.getElementById('questions').style.display = 'none';
+        document.getElementById('questions').innerHTML = '';
+        document.getElementById('result').style.display = 'none';
+        document.getElementById('mainMenu').style.display = 'block';
+        document.getElementById('urgencyGuide').style.display = 'flex';
+    }
+
+    function showQuestion(id) {
+        document.getElementById('mainMenu').style.display = 'none';
+        document.getElementById('urgencyGuide').style.display = 'none';
+        document.getElementById('questions').style.display = 'block';
+
+        const question = questions.find(q => q.id === id);
+        if (!question) {
+            alert('Error: Question not found. Returning to main menu.');
+            startAssessment();
+            return;
+        }
+
+        currentQuestion = question;
+        
+        const container = document.createElement('div');
+        container.className = 'question-container active';
+        
+        const text = document.createElement('p');
+        text.textContent = question.text;
+        container.appendChild(text);
+
+        question.options.forEach(option => {
+            const button = document.createElement('button');
+            button.textContent = option.text;
+            button.onclick = () => handleAnswer(option);
+            container.appendChild(button);
+        });
+
+        const backButton = document.createElement('button');
+        backButton.textContent = 'Back to Main Menu';
+        backButton.className = 'back-button';
+        backButton.onclick = startAssessment;
+        container.appendChild(backButton);
+
+        document.getElementById('questions').innerHTML = '';
+        document.getElementById('questions').appendChild(container);
+    }
+
+    function handleAnswer(option) {
+        if (option.result) {
+            showResult(option.result);
+        } else if (option.next) {
+            showQuestion(option.next);
+        }
+    }
+
+    function showResult(resultId) {
+        const result = results[resultId];
+        const container = document.getElementById('result');
+        
+        const preReferralId = currentQuestion ? currentQuestion.preReferral : null;
+        const preReferralData = preReferralId ? preReferralSteps[preReferralId] : null;
+        
+        let html = `
+            <div class="${result.class}">
+                <h2>${result.title}</h2>
+                <p>${result.text}</p>`;
+
+        if (preReferralData) {
+            html += `
+                <div class="urgent">
+                    <h3>${preReferralData.title}</h3>
+                    <p>Complete these steps before or during referral call:</p>
+                    <ul>
+                        ${preReferralData.steps.map(step => `<li>${step}</li>`).join('')}
+                    </ul>
+                </div>`;
+        }
+
+        html += `
+                <h3>Next Steps:</h3>
+                <ul>
+                    ${result.instructions.map(i => `<li>${i}</li>`).join('')}
+                </ul>
+            </div>
+            <button onclick="startAssessment()">Start New Assessment</button>
+        `;
+        
+        container.innerHTML = html;
+        container.style.display = 'block';
+        
+        document.getElementById('questions').style.display = 'none';
+        document.getElementById('questions').innerHTML = '';
+    }
+
+    function showUrgencyInfo(type) {
+        const urgencyInfo = {
+            emergent: {
+                title: "Emergency Cases",
+                description: "Require immediate ophthalmologist contact and evaluation. These include:",
+                examples: [
+                    "Chemical burns",
+                    "Acute vision loss",
+                    "Globe rupture/penetrating trauma",
+                    "Orbital compartment syndrome",
+                    "Acute angle closure glaucoma"
+                ]
+            },
+            urgent: {
+                title: "Urgent Cases",
+                description: "Require evaluation within 24 hours. These include:",
+                examples: [
+                    "Corneal ulcer",
+                    "New onset iritis",
+                    "Post-op complications",
+                    "Retinal detachment symptoms",
+                    "Painful red eye in contact lens wearer"
+                ]
+            },
+            routine: {
+                title: "Routine Cases",
+                description: "Can be scheduled through regular channels. These include:",
+                examples: [
+                    "Gradual vision changes",
+                    "Stable floaters",
+                    "Mild dry eye",
+                    "Regular follow-up",
+                    "Non-acute conditions"
+                ]
+            }
+        };
+
+        const info = urgencyInfo[type];
+        const modal = document.createElement('div');
+        modal.className = 'info-modal';
+        modal.innerHTML = `
+            <h3>${info.title}</h3>
+            <p>${info.description}</p>
+            <ul>
+                ${info.examples.map(ex => `<li>${ex}</li>`).join('')}
+            </ul>
+            <button onclick="closeModal()">Close</button>
+        `;
+
+        const backdrop = document.createElement('div');
+        backdrop.className = 'modal-backdrop';
+        backdrop.onclick = closeModal;
+
+        document.body.appendChild(backdrop);
+        document.body.appendChild(modal);
+
+        backdrop.style.display = 'block';
+        modal.style.display = 'block';
+    }
+
+    function showAllGuides() {
+        const modal = document.createElement('div');
+        modal.className = 'info-modal';
+        
+        let html = '<h2>Examination Guides</h2>';
+        for (const guideId in examinationGuides) {
+            const guide = examinationGuides[guideId];
+            html += `
+                <div class="guide">
+                    <h4>${guide.title}</h4>
+                    <ul>
+                        ${guide.steps.map(step => `<li>${step}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+        }
+        html += '<button onclick="closeModal()">Close</button>';
+        modal.innerHTML = html;
+
+        const backdrop = document.createElement('div');
+        backdrop.className = 'modal-backdrop';
+        backdrop.onclick = closeModal;
+
+        document.body.appendChild(backdrop);
+        document.body.appendChild(modal);
+
+        backdrop.style.display = 'block';
+        modal.style.display = 'block';
+    }
+
+    function closeModal() {
+        const modals = document.querySelectorAll('.info-modal');
+        const backdrops = document.querySelectorAll('.modal-backdrop');
+        modals.forEach(modal => modal.remove());
+        backdrops.forEach(backdrop => backdrop.remove());
+    }
+
+    window.onload = startAssessment;
+    </script>
+</body>
+</html>
